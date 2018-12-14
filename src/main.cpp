@@ -9,6 +9,8 @@
 
 using namespace std;
 
+vector<Env> envs;	//Environment objects like walls
+
 int main (int argc, char** argv) {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "Hackathon");
@@ -22,7 +24,6 @@ int main (int argc, char** argv) {
 	
 	test_map >> background_path;
 	test_map >> num_tiles;
-	vector<Env> envs;	//Environment objects like walls
 
 	//fill map with environmental stuff until an invalid env is found (END OF FILE also)
 	while(num_tiles--) {
