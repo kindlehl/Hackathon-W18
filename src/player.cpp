@@ -54,12 +54,25 @@ void Player::update() {
 		resetFrame(currentState);
 	}
 
+	this->move();
+
 	//set frame
 	hitbox.setTextureRect(frame);
 
 	//set previousState
 	previousState = currentState;
 	framecount++;
+}
+
+void Player::move() {
+	switch (currentState) {
+		case WalkingRight:
+			hitbox.move(sf::Vector2f(5,0));
+			break;
+		case WalkingLeft:
+			hitbox.move(sf::Vector2f(-5,0));
+			break;
+	}
 }
 
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -70,12 +83,10 @@ void Player::action(sf::Event e) {
 	if(e.type == sf::Event::KeyPressed) { 
 		switch (e.key.code) {
 			case sf::Keyboard::A:
-				hitbox.move(sf::Vector2f(-5,0));
 				//set state
 				currentState = WalkingLeft;
 				break;
 			case sf::Keyboard::D:
-				hitbox.move(sf::Vector2f(5,0));
 				//set state
 				currentState = WalkingRight;
 				break;

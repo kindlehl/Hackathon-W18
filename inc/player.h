@@ -26,6 +26,7 @@ public:
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 	void action(sf::Event);
 	void update();
+	void move();
 	void resetFrame(State playerState);
 private:
 	int framecount = 0;
