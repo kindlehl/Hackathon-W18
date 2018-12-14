@@ -9,6 +9,7 @@ using namespace std;
 int main (int argc, char** argv) {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "Hackathon");
+	window.setFramerateLimit(60);
 	Player player;
 
     while (window.isOpen())
@@ -20,8 +21,8 @@ int main (int argc, char** argv) {
             // Close window: exit
             if (event.type == sf::Event::Closed)
                 window.close();
-			else if (event.type == sf::Event::KeyPressed) {
-				player.action(event.key.code);
+			else if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
+				player.action(event);
 			}	
         }
         // Clear screen

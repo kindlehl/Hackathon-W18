@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 enum State {
+	Idle,
 	WalkingLeft,
 	WalkingRight,
 	ShootingLeft,
@@ -18,13 +19,16 @@ public:
 	
 	State currentState, previousState;
 
+
 	sf::Sprite hitbox;
 	sf::IntRect frame;
 	sf::Texture cowboy;
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
-	void action(int KeyEnumValue);
+	void action(sf::Event);
 	void update();
 	void resetFrame(State playerState);
+private:
+	int framecount = 0;
 };
 
 #endif
