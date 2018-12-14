@@ -13,18 +13,29 @@ int main (int argc, char** argv) {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "Hackathon");
 	window.setFramerateLimit(60);
+
 	Player player;
 
-	int num_maps;
+	int num_tiles;
+	string background_path;
 	ifstream test_map("maps/test.map"); //map I'm using to test with
 	
-	test_map >> num_maps;
+	test_map >> background_path;
+	test_map >> num_tiles;
 	vector<Env> envs;	//Environment objects like walls
 
 	//fill map with environmental stuff until an invalid env is found (END OF FILE also)
-	while(num_maps--) {
+	while(num_tiles--) {
 		envs.push_back(Env(test_map));
 	}
+
+	sf::RectangleShape background;
+	sf::Texture* background_tex = new sf::Texture;
+	background_tex->loadFromFile(background_path);
+
+	background.setTexture(background_tex);
+	background.setPosition(sf::Vector2f(0,0));
+	background.setSize(static_cast<sf::Vector2f>(window.getSize()));
 
     while (window.isOpen())
     {
@@ -42,6 +53,8 @@ int main (int argc, char** argv) {
         // Clear screen
         window.clear();
         // Draw the sprite
+		
+		window.draw(background);
 
 		player.update();
 

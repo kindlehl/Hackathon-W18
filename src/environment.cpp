@@ -2,6 +2,7 @@
 
 
 /* Maps are stored in files in the following format:
+ * relative/path/to/background/image
  * num_tiles
  * x y w h
  * relative/path/to/image/
