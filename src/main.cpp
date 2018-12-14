@@ -1,0 +1,37 @@
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
+
+#include "../inc/player.h"
+
+using namespace std;
+
+int main (int argc, char** argv) {
+    // Create the main window
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Hackathon");
+	window.setFramerateLimit(60);
+	Player player;
+
+    while (window.isOpen())
+    {
+        // Process events
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            // Close window: exit
+            if (event.type == sf::Event::Closed)
+                window.close();
+			else if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
+				player.action(event);
+			}	
+        }
+        // Clear screen
+        window.clear();
+        // Draw the sprite
+		player.update();
+        window.draw(player);
+        // Draw the string
+        window.display();
+    }
+    return EXIT_SUCCESS;
+}
