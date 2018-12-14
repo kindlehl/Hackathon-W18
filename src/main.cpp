@@ -27,6 +27,7 @@ int main (int argc, char** argv) {
         // Clear screen
         window.clear();
         // Draw the sprite
+		player.update();
         window.draw(player);
         // Draw the string
         window.display();
