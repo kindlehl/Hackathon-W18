@@ -1,4 +1,6 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+
 #include "../inc/player.h"
 
 using namespace std;
