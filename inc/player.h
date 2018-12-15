@@ -47,7 +47,7 @@ public:
 	void move();
 	void resetFrame(State playerState);
 private:
-	bool processMovement(sf::Vector2f& offset);
+	bool processMovement(sf::Vector2i& offset);
 	int framecount = 0;
 };
 

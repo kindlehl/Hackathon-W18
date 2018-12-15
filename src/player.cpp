@@ -129,52 +129,110 @@ void Player::update() {
 //Returns true if collision occured
 //Modifies argument 'offset' to be the largest offest the player could move
 //without intersecting with an environmental object
-bool Player::processMovement(sf::Vector2f& offset) {
+bool Player::processMovement(sf::Vector2i& offset) {
 	
 	bool collision = false;
-	sf::IntRect collided_rect;
+	sf::IntRect overlap;
+
+	//move hitbox
+	hitbox.left += offset.x;
+	hitbox.top += offset.y;
+	spritebox.move(offset.x, offset.y);
+
 	for(const auto& e : envs) {
 
-		sf::IntRect env_rect(e.hitbox.left, e.hitbox.top, e.hitbox.width, e.hitbox.height), overlap;
-		//if a major collision occurs
-		if(hitbox.intersects(sf::IntRect(env_rect), overlap) && overlap.width > 1 && overlap.height > 1) {
+		sf::IntRect env_rect(e.hitbox.left, e.hitbox.top, e.hitbox.width, e.hitbox.height);
+		//if a collision occurs with new hitbox position
+		if(hitbox.intersects(env_rect, overlap)) {
 			std::cerr << "Collision detected, avoiding movements" <<  std::endl;
+			//set collision to true
 			collision = true;
-			collided_rect = env_rect;
 			break;
 		}
 
 	}
 
+	//if a collision occured
 	if(collision) {
 		switch(currentState) {
 			case WalkingLeft:
 				{
-					//set offset to move player to right side of environment object
-					int right_wall = collided_rect.left + collided_rect.width;
-					offset.x = right_wall - hitbox.left;
+					//move hitbox+sprite by the amount the hitboxes overlap
+					offset.x = overlap.width;
 					break;
 				}
 			case WalkingRight:
 				{
-					//set offset to move player to left side of environment object
-					int left_wall = collided_rect.left;
-					offset.x = left_wall - (hitbox.left + hitbox.width );
+					//move hitbox+sprite by the amount the hitboxes overlap
+					offset.x = -overlap.width;
+					break;
+				}
+			case WalkingUp:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap
+					offset.y = overlap.height;
+					break;
+				}
+			case WalkingDown:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap
+					offset.y = -overlap.height;
+					break;
+				}
+			case WalkingDownRight:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap - 
+					//priorities the dimension that is most overlapped
+					if(overlap.height >= overlap.width)
+						offset.x = -overlap.width;
+					else
+						offset.y = -overlap.height;
+					break;
+				}
+			case WalkingDownLeft:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap - 
+					//priorities the dimension that is most overlapped
+					if(overlap.height >= overlap.width)
+						offset.x = overlap.width;
+					else
+						offset.y = -overlap.height;
+					break;
+				}
+			case WalkingUpRight:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap - 
+					//priorities the dimension that is most overlapped
+					if(overlap.height >= overlap.width)
+						offset.x = -overlap.width;
+					else
+						offset.y = overlap.height;
+					break;
+				}
+			case WalkingUpLeft:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap - 
+					//priorities the dimension that is most overlapped
+					if(overlap.height >= overlap.width)
+						offset.x = overlap.width;
+					else
+						offset.y = overlap.height;
 					break;
 				}
 
+
 		}
+		hitbox.left += offset.x;
+		hitbox.top += offset.y;
+		spritebox.move(offset.x, offset.y);
 	}
 
-	hitbox.left += offset.x;
-	hitbox.top += offset.y;
-	spritebox.move(offset);
 
 	return collision;
 }
 
 void Player::move() {
-	sf::Vector2f offset(0,0); //offset - determines how far player moves. Modified in procesMovement in case of collision
+	sf::Vector2i offset(0,0); //offset - determines how far player moves. Modified in procesMovement in case of collision
 	switch (currentState) {
 		case WalkingUp:
 			offset.y = -6;
