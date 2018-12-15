@@ -3,6 +3,7 @@
 #include <SFML/System.hpp>
 #include <fstream>
 #include <vector>
+#include "../inc/bullet.h"
 
 #include "../inc/player.h"
 #include "../inc/environment.h"
@@ -61,6 +62,13 @@ int main (int argc, char** argv) {
 				cout << "x: " << window.mapPixelToCoords(pixelCoord).x << "y: " << window.mapPixelToCoords(pixelCoord).y << std::endl;
 			}
         }
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+			Bullet bullet;
+			//bullet.setPosition(player.hitbox.getPosition());
+			bullet.setPosition(20, 20);
+			bullet.draw(window);
+			window.draw(bullet);
+		}
         // Clear screen
         window.clear();
         // Draw the sprite
