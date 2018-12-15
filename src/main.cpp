@@ -3,6 +3,7 @@
 #include <SFML/System.hpp>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 
 #include "../inc/player.h"
 #include "../inc/environment.h"
@@ -10,15 +11,15 @@
 using namespace std;
 
 vector<Env> envs;	//Environment objects like walls
+sf::Vector2i screenSize(800,800);
 
 int main (int argc, char** argv) {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(800, 800), "Hackathon");
+    sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "Hackathon");
 	sf::View view;
 	view.setCenter(window.getSize().x / 2, window.getSize().y / 2);
 	view.rotate(45);
 	view.setSize(view.getSize().x, view.getSize().y*2);
-	view.zoom(1.3);
 	window.setView(view);
 	window.setFramerateLimit(60);
 
@@ -36,6 +37,8 @@ int main (int argc, char** argv) {
 		envs.push_back(Env(test_map));
 	}
 
+	sort(envs.begin(), envs.end());
+
 	sf::RectangleShape background;
 	sf::Texture* background_tex = new sf::Texture;
 	background_tex->loadFromFile(background_path);
@@ -47,6 +50,9 @@ int main (int argc, char** argv) {
 
     while (window.isOpen())
     {
+        // Clear screen
+        window.clear();
+
         // Process events
         sf::Event event;
         while (window.pollEvent(event))
@@ -61,14 +67,10 @@ int main (int argc, char** argv) {
 				cout << "x: " << window.mapPixelToCoords(pixelCoord).x << "y: " << window.mapPixelToCoords(pixelCoord).y << std::endl;
 			}
         }
-        // Clear screen
-        window.clear();
-        // Draw the sprite
-		
-		window.draw(background);
 
 		player.update();
 
+		window.draw(background);
 		//draw environmental things
 		for(auto &e : envs ) {
 			window.draw(e);

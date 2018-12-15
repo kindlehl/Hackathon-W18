@@ -4,23 +4,29 @@
 Player::Player() {
 	//player defaults to the walkingRight position
 	currentState = previousState = Idle;
+	
+	hitbox.left = 100;
+	hitbox.top = 100;
+	hitbox.width = 40;
+	hitbox.height = 40;
 
-	hitbox.setPosition(0,200);
+	//set sprite relative to its hitbox using black magic
+	spritebox.setPosition(hitbox.left + 1.41 * hitbox.width, hitbox.top - 1.41 * hitbox.height - hitbox.height / 2);
 
 	//load cowboy texture from file
 	cowboy.loadFromFile("img/player.png");
 
-	//set hitbox to use cowboy spritesheet
-	hitbox.setTexture(cowboy);
-	hitbox.rotate(45);
+	//set spritebox to use cowboy spritesheet
+	spritebox.setTexture(cowboy);
+	spritebox.rotate(45);
+	//random values that work. second argument needs to be twice the first
+	spritebox.setScale(.5, 1);
 	//set frame to beginning of walking right animation
 	resetFrame(WalkingRight);
 	
 
-	//slap current animation frame onto the hitbox
-	hitbox.setTextureRect(frame);
-
-	hitbox.setPosition(0,100);
+	//slap current animation frame onto the spritebox
+	spritebox.setTextureRect(frame);
 }
 
 void Player::resetFrame(State playerState) {
@@ -108,10 +114,10 @@ void Player::update() {
 		resetFrame(currentState);
 	}
 
-	this->move();
-
 	//set frame
-	hitbox.setTextureRect(frame);
+	spritebox.setTextureRect(frame);
+
+	this->move();
 
 	//set previousState
 	previousState = currentState;
@@ -123,17 +129,15 @@ void Player::update() {
 //Returns true if collision occured
 //Modifies argument 'offset' to be the largest offest the player could move
 //without intersecting with an environmental object
-template <class T>
-bool Player::collisionWouldHappen(sf::Vector2<T>& offset) {
+bool Player::processMovement(sf::Vector2f& offset) {
 	
-	//player rect
-	sf::Rect<T> player_rect(hitbox.getPosition() + offset, sf::Vector2f(frame.width, frame.height));
 	bool collision = false;
-	sf::Rect<T> collided_rect;
+	sf::IntRect collided_rect;
 	for(const auto& e : envs) {
 
-		sf::Rect<T> env_rect(e.hitbox.getPosition(), e.hitbox.getSize());
-		if(player_rect.intersects(env_rect)) {
+		sf::IntRect env_rect(e.hitbox.left, e.hitbox.top, e.hitbox.width, e.hitbox.height), overlap;
+		//if a major collision occurs
+		if(hitbox.intersects(sf::IntRect(env_rect), overlap) && overlap.width > 1 && overlap.height > 1) {
 			std::cerr << "Collision detected, avoiding movements" <<  std::endl;
 			collision = true;
 			collided_rect = env_rect;
@@ -148,77 +152,77 @@ bool Player::collisionWouldHappen(sf::Vector2<T>& offset) {
 				{
 					//set offset to move player to right side of environment object
 					int right_wall = collided_rect.left + collided_rect.width;
-					offset.x = right_wall - hitbox.getPosition().x;
+					offset.x = right_wall - hitbox.left;
 					break;
 				}
 			case WalkingRight:
 				{
 					//set offset to move player to left side of environment object
 					int left_wall = collided_rect.left;
-					offset.x = left_wall - (hitbox.getPosition().x + frame.width);
+					offset.x = left_wall - (hitbox.left + hitbox.width );
 					break;
 				}
 
 		}
 	}
 
+	hitbox.left += offset.x;
+	hitbox.top += offset.y;
+	spritebox.move(offset);
+
 	return collision;
 }
 
 void Player::move() {
-	sf::Vector2f offset(0,0); //no offset initially
+	sf::Vector2f offset(0,0); //offset - determines how far player moves. Modified in procesMovement in case of collision
 	switch (currentState) {
 		case WalkingUp:
 			offset.y = -6;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingRight:
 			offset.x = 6;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingDown:
 			offset.y = 6;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingLeft:
 			offset.x = -6;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingUpRight:
 			offset.x = 3;
 			offset.y = -3;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingDownRight:
 			offset.x = 3;
 			offset.y = 3;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingUpLeft:
 			offset.x = -3;
 			offset.y = -3;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingDownLeft:
 			offset.x = -3;
 			offset.y = 3;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 
 	}
+
+	processMovement(offset);
+
+	if(currentState != Idle)
+		std::cout << "The topleft corner of cowboy: " << this->spritebox.getPosition().x << ", " << this->spritebox.getPosition().y << std::endl;
 }
 
 
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	target.draw(hitbox, states);
+	target.draw(spritebox, states);
+
+	sf::RectangleShape hitboxOutline;
+	hitboxOutline.setSize(sf::Vector2f(hitbox.width, hitbox.height));
+	hitboxOutline.setPosition(hitbox.left, hitbox.top);
+	hitboxOutline.setFillColor(sf::Color(150, 50, 250));
+	target.draw(hitboxOutline);
+
 }
 
 void Player::action(sf::Event e) {
