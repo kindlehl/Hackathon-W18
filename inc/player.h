@@ -5,8 +5,9 @@
 #include <vector>
 
 #include "../inc/environment.h"
+#include "../inc/hitbox.h"
 
-extern std::vector<Env> envs;
+extern std::vector<Hitbox*> envs;
 
 enum State {
 	Idle,
@@ -28,26 +29,29 @@ enum State {
 	ShootingDownLeft
 };
 
-class Player : public sf::Drawable {
+class Player : public Hitbox {
 public:
 	Player();
+	~Player() {};
 	
 	State currentState, previousState;
 
 
-	sf::Sprite hitbox;
+	sf::IntRect hitbox;
+	sf::Sprite spritebox;
 	sf::IntRect frame; //rectangle that determines the frame
 					   //of the cowboy and his scale factor
 	sf::Texture cowboy;
 
-	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
+	void draw(sf::RenderTarget&, sf::RenderStates) const;
+	sf::IntRect getHitbox() const;
+
 	void action(sf::Event);
 	void update();
 	void move();
 	void resetFrame(State playerState);
 private:
-	template <class T>
-	bool collisionWouldHappen(sf::Vector2<T>& offset);
+	bool processMovement(sf::Vector2i& offset);
 	int framecount = 0;
 };
 
