@@ -15,9 +15,6 @@
  * type
 */
 
-bool Env::operator< (const Env& e) {
-	return hitbox.top > e.hitbox.top;
-}
 
 Env::Env(std::istream& map) {
 	int x, y, w, h;
@@ -60,6 +57,10 @@ Env::Env(std::istream& map) {
 		valid = false;
 	}
 
+}
+
+sf::IntRect Env::getHitbox() const {
+	return hitbox;
 }
 
 bool Env::good() {

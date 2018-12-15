@@ -29,6 +29,10 @@ Player::Player() {
 	spritebox.setTextureRect(frame);
 }
 
+sf::IntRect Player::getHitbox() const {
+	return hitbox;
+}
+
 void Player::resetFrame(State playerState) {
 	switch(playerState) {
 		case WalkingUp:
@@ -141,7 +145,12 @@ bool Player::processMovement(sf::Vector2i& offset) {
 
 	for(const auto& e : envs) {
 
-		sf::IntRect env_rect(e.hitbox.left, e.hitbox.top, e.hitbox.width, e.hitbox.height);
+		sf::IntRect env_rect = e->getHitbox();
+		
+		//skip if reached your own hitbox
+		if(hitbox == env_rect)
+			continue;
+
 		//if a collision occurs with new hitbox position
 		if(hitbox.intersects(env_rect, overlap)) {
 			std::cerr << "Collision detected, avoiding movements" <<  std::endl;

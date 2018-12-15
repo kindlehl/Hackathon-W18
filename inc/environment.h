@@ -6,7 +6,8 @@
 #include <string>
 #include <iostream>
 
-extern sf::Vector2i screenSize;
+#include "../inc/hitbox.h"
+
 
 //This file defines the object that
 //represents terrain. These objects can be jumped onto,
@@ -19,9 +20,8 @@ enum Type {
 	DEADLY	// you touch you die? probably won't implement
 };
 
-class Env : public sf::Drawable {
+class Env : public Hitbox {
 	public:
-		bool operator< (const Env& e);
 		Env() = delete;
 		Env(std::istream& map);
 		~Env() {}; //CAUSES MEMORY LEAK
@@ -29,7 +29,8 @@ class Env : public sf::Drawable {
 		sf::Sprite spritebox;
 		sf::IntRect hitbox;
 		sf::Texture* tex;
-		virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
+		void draw(sf::RenderTarget&, sf::RenderStates) const;
+		sf::IntRect getHitbox() const;
 
 		void update();
 		void move();

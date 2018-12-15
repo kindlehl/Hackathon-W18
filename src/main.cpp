@@ -10,7 +10,7 @@
 
 using namespace std;
 
-vector<Env> envs;	//Environment objects like walls
+vector<Hitbox*> envs;	//Environment objects like walls
 sf::Vector2i screenSize(800,800);
 
 int main (int argc, char** argv) {
@@ -34,10 +34,11 @@ int main (int argc, char** argv) {
 
 	//fill map with environmental stuff until an invalid env is found (END OF FILE also)
 	while(num_tiles--) {
-		envs.push_back(Env(test_map));
+		envs.push_back(new Env(test_map));
 	}
 
-	sort(envs.begin(), envs.end());
+	envs.push_back(&player);
+
 
 	sf::RectangleShape background;
 	sf::Texture* background_tex = new sf::Texture;
@@ -71,12 +72,15 @@ int main (int argc, char** argv) {
 		player.update();
 
 		window.draw(background);
+		
+		//move drawables into proper drawing order
+		sort(envs.begin(), envs.end());
+
 		//draw environmental things
 		for(auto &e : envs ) {
-			window.draw(e);
+			window.draw(*e);
 		}
 
-        window.draw(player);
         // Draw the string
         window.display();
     }
