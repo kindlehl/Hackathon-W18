@@ -6,6 +6,8 @@
 #include <string>
 #include <iostream>
 
+extern sf::Vector2i screenSize;
+
 //This file defines the object that
 //represents terrain. These objects can be jumped onto,
 //walked on, or climbed in the case of a ladder
@@ -19,11 +21,13 @@ enum Type {
 
 class Env : public sf::Drawable {
 	public:
+		bool operator< (const Env& e);
 		Env() = delete;
 		Env(std::istream& map);
 		~Env() {}; //CAUSES MEMORY LEAK
 		Type type;
-		sf::RectangleShape hitbox;
+		sf::Sprite spritebox;
+		sf::IntRect hitbox;
 		sf::Texture* tex;
 		virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 

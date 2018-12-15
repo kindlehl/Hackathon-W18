@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=--std=c++14 -L/lib -L/usr/local/lib -I/usr/include
+CFLAGS=--std=c++14 -L/lib -L/usr/local/lib -I/usr/include -g
 CLINK= -lsfml-graphics -lsfml-window -lsfml-system
 
 game: player.o environment.o src/main.cpp

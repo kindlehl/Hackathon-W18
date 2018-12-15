@@ -35,7 +35,8 @@ public:
 	State currentState, previousState;
 
 
-	sf::Sprite hitbox;
+	sf::IntRect hitbox;
+	sf::Sprite spritebox;
 	sf::IntRect frame; //rectangle that determines the frame
 					   //of the cowboy and his scale factor
 	sf::Texture cowboy;
@@ -46,8 +47,7 @@ public:
 	void move();
 	void resetFrame(State playerState);
 private:
-	template <class T>
-	bool collisionWouldHappen(sf::Vector2<T>& offset);
+	bool processMovement(sf::Vector2f& offset);
 	int framecount = 0;
 };
 
