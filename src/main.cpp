@@ -32,12 +32,14 @@ int main (int argc, char** argv) {
 	test_map >> background_path;
 	test_map >> num_tiles;
 
+	//player is always at front
+	//of array, so always drawn first
+	envs.push_back(&player);
+	
 	//fill map with environmental stuff until an invalid env is found (END OF FILE also)
 	while(num_tiles--) {
 		envs.push_back(new Env(test_map));
 	}
-
-	envs.push_back(&player);
 
 	sf::RectangleShape background;
 	sf::Texture* background_tex = new sf::Texture;
@@ -73,7 +75,9 @@ int main (int argc, char** argv) {
 		window.draw(background);
 		
 		//move drawables into proper drawing order
-		sort(envs.begin(), envs.end());
+		//player is never sorted into the array
+		//because he should be drawn first each time
+		sort(envs.begin(), envs.end(), hitboxCompare());
 
 		//draw environmental things
 		for(auto &e : envs ) {
