@@ -45,6 +45,8 @@ int main (int argc, char** argv) {
 	background.setPosition(sf::Vector2f(0,0));
 	background.setSize(static_cast<sf::Vector2f>(window.getSize()));
 
+	vector<Bullet> bulletVec;
+	bool isFiring = false;
 
     while (window.isOpen())
     {
@@ -62,13 +64,12 @@ int main (int argc, char** argv) {
 				cout << "x: " << window.mapPixelToCoords(pixelCoord).x << "y: " << window.mapPixelToCoords(pixelCoord).y << std::endl;
 			}
         }
+		
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-			Bullet bullet;
-			//bullet.setPosition(player.hitbox.getPosition());
-			bullet.setPosition(20, 20);
-			bullet.draw(window);
-			window.draw(bullet);
+			isFiring = true;
 		}
+
+
         // Clear screen
         window.clear();
         // Draw the sprite
@@ -80,6 +81,22 @@ int main (int argc, char** argv) {
 		//draw environmental things
 		for(auto &e : envs ) {
 			window.draw(e);
+		}
+
+		if (isFiring) {
+			Bullet newBullet;
+			newBullet.setPosition(player.hitbox.getPosition());
+			bulletVec.push_back(newBullet);
+			//window.draw(bullet);
+			//bullet.move(3, 0);
+			//bullet.fireRight(3, player.hitbox.getPosition());
+			//window.draw(bullet);
+			isFiring = false;
+
+		}
+		for (int i = 0; i < bulletVec.size(); i++) {
+			window.draw(bulletVec[i]);
+			bulletVec[i].fireRight(5);
 		}
 
         window.draw(player);

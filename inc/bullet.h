@@ -9,8 +9,10 @@ public:
 
 	Bullet();
 	void fireRight(float, sf::Vector2f);
+	void fireRight(float);
 	void fireLeft(float, float, float);
-	void draw(sf::RenderWindow &window);
+	virtual void draw(sf::RenderTarget & target, sf::RenderStates states);
+	//virtual void draw(sf::RenderWindow &window);
 
 protected:
 private:

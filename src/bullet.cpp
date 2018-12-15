@@ -15,6 +15,11 @@ void Bullet::fireRight(float speed, sf::Vector2f posIn)
 	move(speed, 0);
 }
 
+void Bullet::fireRight(float speed)
+{
+	move(speed, 0);
+}
+
 //fire to the left
 void Bullet::fireLeft(float speed, float playerX, float playerY)
 {
@@ -23,9 +28,9 @@ void Bullet::fireLeft(float speed, float playerX, float playerY)
 	move(-speed, 0);
 }
 
-void Bullet::draw(sf::RenderWindow & window)
+void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states)
 {
-	window.draw(*this);
+	target.draw(*this);
 }
 
 
