@@ -159,7 +159,6 @@ bool Player::collisionWouldHappen(sf::Vector2<T>& offset) {
 					break;
 				}
 
-			}
 		}
 	}
 
@@ -213,7 +212,6 @@ void Player::move() {
 			collisionWouldHappen(offset);
 			hitbox.move(offset);
 			break;
-			hitbox.move(whatever);
 
 	}
 }

@@ -18,7 +18,7 @@ int main (int argc, char** argv) {
 	view.setCenter(window.getSize().x / 2, window.getSize().y / 2);
 	view.rotate(45);
 	view.setSize(view.getSize().x, view.getSize().y*2);
-	view.zoom(1.5);
+	view.zoom(1.3);
 	window.setView(view);
 	window.setFramerateLimit(60);
 
