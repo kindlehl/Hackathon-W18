@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=--std=c++14 -L/lib -I/usr/include
+CFLAGS=--std=c++14 -L/lib -L/usr/local/lib -I/usr/include
 CLINK= -lsfml-graphics -lsfml-window -lsfml-system
 
 game: player.o environment.o src/main.cpp
@@ -10,3 +10,6 @@ environment.o: src/environment.cpp inc/environment.h
 
 player.o: src/player.cpp inc/player.h
 	$(CC) $(CFLAGS) src/player.cpp -c $(CLINK)
+
+server: src/server.cpp inc/server.h
+	$(CC) $(CFLAGS) src/server.cpp -o server -lenet 

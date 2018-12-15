@@ -13,7 +13,13 @@ vector<Env> envs;	//Environment objects like walls
 
 int main (int argc, char** argv) {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Hackathon");
+    sf::RenderWindow window(sf::VideoMode(800, 800), "Hackathon");
+	sf::View view;
+	view.setCenter(window.getSize().x / 2, window.getSize().y / 2);
+	view.rotate(45);
+	view.setSize(view.getSize().x, view.getSize().y*2);
+	view.zoom(1.3);
+	window.setView(view);
 	window.setFramerateLimit(60);
 
 	Player player;
@@ -38,6 +44,7 @@ int main (int argc, char** argv) {
 	background.setPosition(sf::Vector2f(0,0));
 	background.setSize(static_cast<sf::Vector2f>(window.getSize()));
 
+
     while (window.isOpen())
     {
         // Process events
@@ -49,7 +56,10 @@ int main (int argc, char** argv) {
                 window.close();
 			else if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
 				player.action(event);
-			}	
+			} else if (event.type == sf::Event::MouseMoved) {
+				sf::Vector2i pixelCoord(event.mouseMove.x, event.mouseMove.y);
+				cout << "x: " << window.mapPixelToCoords(pixelCoord).x << "y: " << window.mapPixelToCoords(pixelCoord).y << std::endl;
+			}
         }
         // Clear screen
         window.clear();
