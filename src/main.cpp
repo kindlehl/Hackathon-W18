@@ -67,6 +67,8 @@ int main (int argc, char** argv) {
 		}
 
         window.draw(player);
+		//bullet testing
+		bullet.setPosition()
 		window.draw(bullet);
         // Draw the string
         window.display();
