@@ -5,14 +5,18 @@ Player::Player() {
 	//player defaults to the walkingRight position
 	currentState = previousState = Idle;
 
+	hitbox.setPosition(0,200);
+
 	//load cowboy texture from file
 	cowboy.loadFromFile("img/player.png");
 
 	//set hitbox to use cowboy spritesheet
 	hitbox.setTexture(cowboy);
+	hitbox.rotate(45);
 	//set frame to beginning of walking right animation
 	resetFrame(WalkingRight);
 	
+
 	//slap current animation frame onto the hitbox
 	hitbox.setTextureRect(frame);
 
