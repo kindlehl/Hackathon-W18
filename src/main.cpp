@@ -47,6 +47,9 @@ int main (int argc, char** argv) {
 
 	string map = "maps/test.map";
 
+	vector<Bullet> bulletVec;
+	bool isFiring = false;
+
 	auto background = loadMap(map);
 
 	//create player locally and on the server
@@ -75,13 +78,12 @@ int main (int argc, char** argv) {
 				cout << "x: " << window.mapPixelToCoords(pixelCoord).x << "y: " << window.mapPixelToCoords(pixelCoord).y << std::endl;
 			}
         }
+		
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-			Bullet bullet;
-			//bullet.setPosition(player.hitbox.getPosition());
-			bullet.setPosition(20, 20);
-			bullet.draw(window);
-			window.draw(bullet);
+			isFiring = true;
 		}
+
+
         // Clear screen
         window.clear();
         // Draw the sprite
@@ -106,6 +108,24 @@ int main (int argc, char** argv) {
 			window.draw(*e);
 		}
 
+
+		if (isFiring) {
+			Bullet newBullet;
+			newBullet.setPosition(player.hitbox.getPosition());
+			bulletVec.push_back(newBullet);
+			//window.draw(bullet);
+			//bullet.move(3, 0);
+			//bullet.fireRight(3, player.hitbox.getPosition());
+			//window.draw(bullet);
+			isFiring = false;
+
+		}
+		for (int i = 0; i < bulletVec.size(); i++) {
+			window.draw(bulletVec[i]);
+			bulletVec[i].fireRight(5);
+		}
+
+        window.draw(player);
         // Draw the string
         window.display();
     }
