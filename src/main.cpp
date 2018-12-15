@@ -40,6 +40,8 @@ int main (int argc, char** argv) {
 	background.setPosition(sf::Vector2f(0,0));
 	background.setSize(static_cast<sf::Vector2f>(window.getSize()));
 
+	bool isFiring = false;
+
     while (window.isOpen())
     {
         // Process events
@@ -53,6 +55,10 @@ int main (int argc, char** argv) {
 				player.action(event);
 			}	
         }
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+			isFiring = true;
+		}
         // Clear screen
         window.clear();
         // Draw the sprite
@@ -66,10 +72,16 @@ int main (int argc, char** argv) {
 			window.draw(e);
 		}
 
+		if (isFiring) {
+			//bullet.setPosition(player.hitbox.getPosition());
+			bullet.draw(window);
+			bullet.fireRight(2, player.hitbox.getPosition());
+
+			isFiring = false;
+		}
         window.draw(player);
 		//bullet testing
-		bullet.setPosition()
-		window.draw(bullet);
+		//window.draw(bullet);
         // Draw the string
         window.display();
     }
