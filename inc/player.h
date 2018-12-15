@@ -10,12 +10,22 @@ extern std::vector<Env> envs;
 
 enum State {
 	Idle,
-	WalkingLeft,
+	WalkingUp,
 	WalkingRight,
-	ShootingLeft,
+	WalkingDown,
+	WalkingLeft,
+	WalkingUpRight,
+	WalkingDownRight,
+	WalkingUpLeft,
+	WalkingDownLeft,
+	ShootingUp,
 	ShootingRight,
-	JumpingRight,
-	JumpingLeft
+	ShootingDown,
+	ShootingLeft,
+	ShootingUpRight,
+	ShootingDownRight,
+	ShootingUpLeft,
+	ShootingDownLeft
 };
 
 class Player : public sf::Drawable {
