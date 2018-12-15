@@ -108,21 +108,17 @@ int main (int argc, char** argv) {
 			window.draw(*e);
 		}
 
-
+		
 		if (isFiring) {
-			Bullet newBullet;
-			newBullet.setPosition(player.hitbox.getPosition());
+			Bullet newBullet(player.hitbox);
 			bulletVec.push_back(newBullet);
-			//window.draw(bullet);
-			//bullet.move(3, 0);
-			//bullet.fireRight(3, player.hitbox.getPosition());
-			//window.draw(bullet);
 			isFiring = false;
 
 		}
 		for (int i = 0; i < bulletVec.size(); i++) {
 			window.draw(bulletVec[i]);
-			bulletVec[i].fireRight(5);
+			//bulletVec[i].draw(window);
+			bulletVec[i].fireRight(10);
 		}
 
         window.draw(player);

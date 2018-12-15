@@ -1,20 +1,39 @@
 #include "../inc/bullet.h"
 
-Bullet::Bullet()
+// ctor takes in the 
+Bullet::Bullet(sf::IntRect rectIn) {
+	hitbox.left = rectIn.left + rectIn.width/2;
+	hitbox.top = rectIn.top - rectIn.height/2;
+	hitbox.width = rectIn.width/4;
+	hitbox.height = rectIn.height/4;
+	bullet.setFillColor(sf::Color::Red);
+	bullet.setPosition(hitbox.left, hitbox.top);
+	bullet.setSize(sf::Vector2f(hitbox.width, hitbox.height));
+}
+Bullet::Bullet(int leftIn, int topIn, int widthIn, int heightIn)
 {
-	setRadius(5.f);
-	setFillColor(sf::Color::Red);
-	setPosition(10, 10);
+	
+	hitbox.left = leftIn;
+	hitbox.top = topIn;
+	hitbox.width = widthIn;
+	hitbox.height = heightIn;
 }
 
 //fire to the right
-void Bullet::fireRight(float speed, sf::Vector2f posIn)
+void Bullet::fireRight(int speed)
 {
-	setPosition(posIn);
+	//setPosition(posIn);
 	//change x direction of bullet
-	move(speed, 0);
+	hitbox.left += speed;
+	bullet.move(speed, 0);
 }
 
+sf::IntRect Bullet::getHitbox() const
+{
+	return hitbox;
+}
+
+/*
 void Bullet::fireRight(float speed)
 {
 	move(speed, 0);
@@ -27,10 +46,10 @@ void Bullet::fireLeft(float speed, float playerX, float playerY)
 	//change dir in x axis
 	move(-speed, 0);
 }
-
-void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states)
+*/
+void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(*this);
+	target.draw(bullet);
 }
 
 
