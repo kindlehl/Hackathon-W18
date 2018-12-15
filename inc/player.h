@@ -50,9 +50,9 @@ public:
 	void update();
 	void move();
 	void resetFrame(State playerState);
-	int framecount = 0;
 private:
 	bool processMovement(sf::Vector2i& offset);
+	int framecount = 0;
 };
 
 #endif

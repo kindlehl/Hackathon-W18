@@ -8,6 +8,7 @@
 
 #include "../inc/hitbox.h"
 
+extern sf::Vector2i screenSize;
 
 //This file defines the object that
 //represents terrain. These objects can be jumped onto,

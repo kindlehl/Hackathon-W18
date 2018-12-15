@@ -39,7 +39,6 @@ int main (int argc, char** argv) {
 
 	envs.push_back(&player);
 
-
 	sf::RectangleShape background;
 	sf::Texture* background_tex = new sf::Texture;
 	background_tex->loadFromFile(background_path);

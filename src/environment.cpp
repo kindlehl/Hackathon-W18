@@ -15,7 +15,6 @@
  * type
 */
 
-
 Env::Env(std::istream& map) {
 	int x, y, w, h;
 	std::string path, t;
