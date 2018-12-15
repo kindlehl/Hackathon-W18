@@ -6,6 +6,7 @@
 
 #include "../inc/player.h"
 #include "../inc/environment.h"
+#include "../inc/bullet.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ int main (int argc, char** argv) {
 	window.setFramerateLimit(60);
 
 	Player player;
+	Bullet bullet;
 
 	int num_tiles;
 	string background_path;
@@ -65,6 +67,7 @@ int main (int argc, char** argv) {
 		}
 
         window.draw(player);
+		window.draw(bullet);
         // Draw the string
         window.display();
     }

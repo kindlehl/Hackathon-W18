@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../inc/environment.h"
+#include "../inc/bullet.h"
 
 extern std::vector<Env> envs;
 
@@ -23,6 +24,7 @@ public:
 	Player();
 	
 	State currentState, previousState;
+	Bullet* bullet = nullptr;
 
 
 	sf::Sprite hitbox;
@@ -32,6 +34,7 @@ public:
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 	void action(sf::Event);
+	void shoot(State);
 	void update();
 	void move();
 	void resetFrame(State playerState);

@@ -8,8 +8,8 @@ class Bullet : public sf::CircleShape
 public:
 
 	Bullet();
-	void fireRight(float);
-	void fireLeft(float);
+	void fireRight(float, float, float);
+	void fireLeft(float, float, float);
 
 protected:
 private:

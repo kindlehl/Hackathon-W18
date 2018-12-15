@@ -166,3 +166,18 @@ void Player::action(sf::Event e) {
 		}
 	}
 }
+
+//function to shoot gun. Takes State as parameter and 
+//chooses a fire direction based on state
+//WIP
+void Player::shoot(State stateIn)
+{
+	float bulletSpeed = 5.f;
+	if (stateIn == State::WalkingLeft || stateIn == State::ShootingLeft
+		|| stateIn == State::JumpingLeft) {
+		bullet = new Bullet;
+		bullet->fireLeft(bulletSpeed, 10, 10);
+		delete bullet;
+		bullet = nullptr;
+	}
+}
