@@ -78,9 +78,8 @@ void handleEvents(ENetHost* server) {
 			
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
-			printf ("A packet of length %u containing %c was received from %s on channel %u.\n",
+			printf ("A packet of length %u was received from %s on channel %u.\n",
 					event.packet -> dataLength,
-					event.packet -> data,
 					event.peer -> data,
 					event.channelID);
 			//send packet to the other player that did not send it.

@@ -74,6 +74,7 @@ int main (int argc, char** argv) {
 		checkServer(enemy, client);
 
 		player.update();
+		player.sendUpdate(server, client);
 		enemy.update();
 
 		window.draw(background);
