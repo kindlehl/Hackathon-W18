@@ -47,8 +47,15 @@ int main (int argc, char** argv) {
 
 	string map = "maps/test.map";
 
-	vector<Bullet> bulletVec;
-	bool isFiring = false;
+	//bullet containers and bools
+	vector<Bullet> bulletVecRight;
+	vector<Bullet> bulletVecLeft;
+	vector<Bullet> bulletVecUp;
+	vector<Bullet> bulletVecDown;
+	bool isFiringRight = false;
+	bool isFiringLeft = false;
+	bool isFiringUp = false;
+	bool isFiringDown = false;
 
 	auto background = loadMap(map);
 
@@ -77,11 +84,32 @@ int main (int argc, char** argv) {
 				sf::Vector2i pixelCoord(event.mouseMove.x, event.mouseMove.y);
 				cout << "x: " << window.mapPixelToCoords(pixelCoord).x << "y: " << window.mapPixelToCoords(pixelCoord).y << std::endl;
 			}
+			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
+				switch(player.currentState) {
+				case WalkingRight: 
+					isFiringRight = true;
+					break;
+				case Idle:
+					isFiringRight = true;
+					break;
+				case WalkingLeft:
+					isFiringLeft = true;
+					break;
+				case WalkingUp:
+					isFiringUp = true;
+					break;
+				case WalkingDown:
+					isFiringDown = true;
+					break;
+				}
+			}
         }
 		
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+		/*
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::)) {
 			isFiring = true;
 		}
+		*/
 
 
         // Clear screen
@@ -109,16 +137,44 @@ int main (int argc, char** argv) {
 		}
 
 		
-		if (isFiring) {
+		// load bullet vectors 
+		if (isFiringRight) {
 			Bullet newBullet(player.hitbox);
-			bulletVec.push_back(newBullet);
-			isFiring = false;
-
+			bulletVecRight.push_back(newBullet);
+			isFiringRight = false;
 		}
-		for (int i = 0; i < bulletVec.size(); i++) {
-			window.draw(bulletVec[i]);
-			//bulletVec[i].draw(window);
-			bulletVec[i].fireRight(10);
+		if (isFiringLeft) {
+			Bullet newBullet(player.hitbox);
+			bulletVecLeft.push_back(newBullet);
+			isFiringLeft = false;
+		}
+		if (isFiringUp) {
+			Bullet newBullet(player.hitbox);
+			bulletVecUp.push_back(newBullet);
+			isFiringUp = false;
+		}
+		if (isFiringDown) {
+			Bullet newBullet(player.hitbox);
+			bulletVecDown.push_back(newBullet);
+			isFiringDown = false;
+		}
+
+		//fire bullets from vectors
+		for (int i = 0; i < bulletVecRight.size(); i++) {
+			window.draw(bulletVecRight[i]);
+			bulletVecRight[i].fireRight(10);
+		}
+		for (int i = 0; i < bulletVecLeft.size(); i++) {
+			window.draw(bulletVecLeft[i]);
+			bulletVecLeft[i].fireLeft(10);
+		}
+		for (int i = 0; i < bulletVecUp.size(); i++) {
+			window.draw(bulletVecUp[i]);
+			bulletVecUp[i].fireUp(10);
+		}
+		for (int i = 0; i < bulletVecDown.size(); i++) {
+			window.draw(bulletVecDown[i]);
+			bulletVecDown[i].fireDown(10);
 		}
 
         window.draw(player);

@@ -12,8 +12,9 @@ public:
 	Bullet(int, int, int, int);
 	sf::IntRect hitbox;
 	void fireRight(int);
-	//void fireRight(float);
-	//void fireLeft(float, float, float);
+	void fireLeft(int);
+	void fireUp(int);
+	void fireDown(int);
 	sf::IntRect getHitbox() const;
 	void draw(sf::RenderTarget & target, sf::RenderStates states) const;
 	//virtual void draw(sf::RenderWindow &window);

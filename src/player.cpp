@@ -213,6 +213,16 @@ void Player::resetFrame(State playerState) {
 				frame.height = 128
 			};
 			break;
+			/*
+		case ShootingRight:
+			frame = {
+				frame.left = 14 * 128,
+				frame.top = 0,
+				frame.width = 128,
+				frame.height = 128
+			};
+			break;
+			*/
 	}
 }
 
@@ -531,6 +541,10 @@ void Player::action(sf::Event e) {
 					currentState = Idle;
 				}
 				break;
+			//case sf::Keyboard::Space:
+				//space released, indicates shooting
+				//resetFrame(ShootingRight);
+				//break;
 		}
 	}
 }

@@ -28,25 +28,29 @@ void Bullet::fireRight(int speed)
 	bullet.move(speed, 0);
 }
 
+//fire to the left
+void Bullet::fireLeft(int speed)
+{
+	hitbox.left -= speed;
+	bullet.move(-speed, 0);
+}
+
+void Bullet::fireUp(int speed)
+{
+	hitbox.top -= speed;
+	bullet.move(0, -speed);
+}
+
+void Bullet::fireDown(int speed)
+{
+	hitbox.top += speed;
+	bullet.move(0, speed);
+}
+
 sf::IntRect Bullet::getHitbox() const
 {
 	return hitbox;
 }
-
-/*
-void Bullet::fireRight(float speed)
-{
-	move(speed, 0);
-}
-
-//fire to the left
-void Bullet::fireLeft(float speed, float playerX, float playerY)
-{
-	setPosition(playerX, playerY);
-	//change dir in x axis
-	move(-speed, 0);
-}
-*/
 void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(bullet);
