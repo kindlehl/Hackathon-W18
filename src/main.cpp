@@ -44,6 +44,7 @@ int main (int argc, char** argv) {
 
 	//create player locally and on the server
 	Player player;
+	Player enemy;
 	Connection connection(client, server, NEW, player, map);
 
 	envs.push_back(&player);

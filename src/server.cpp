@@ -6,10 +6,16 @@
 
 using namespace std;
 
+//peers (players) 1 and 2
+ENetPeer *p1 = NULL, *p2 = NULL;
+ENetHost* server;
+
 vector<Hitbox*> envs; //used to appease the mighty linker
 sf::Vector2i screenSize(800,800);
 
 void handleEvents(ENetHost* server);
+void send(ENetEvent);
+
 int main(int argc, char** argv) {
 
 	if (enet_initialize () != 0) {
@@ -20,7 +26,6 @@ int main(int argc, char** argv) {
     atexit (enet_deinitialize);
 
 	ENetAddress address;
-	ENetHost * server;
 
 	/* Bind the server to the default localhost.     */
 	/* A specific host address can be specified by   */
@@ -41,6 +46,7 @@ int main(int argc, char** argv) {
 
 	vector<Connection> sessions;
 
+
 	while(1) {
 		
 		handleEvents(server);
@@ -58,7 +64,7 @@ void handleEvents(ENetHost* server) {
 	//std::cout << "Checking event queue" << std::endl;
 	ENetEvent event;
 	/* Wait up to 1000 milliseconds for an event. */
-	while (enet_host_service (server, & event, 1000) > 0)
+	while (enet_host_service (server, & event, 0) > 0)
 	{
 		std::cout << "Found event" << std::endl;
 
@@ -68,7 +74,18 @@ void handleEvents(ENetHost* server) {
 			printf ("A new client connected from %x:%u.\n", 
 					event.peer -> address.host,
 					event.peer -> address.port);
-			/* Store any relevant client information here. */
+
+			//register players
+			if(!p1) {
+				p1 = event.peer;
+				printf("Registered player 1\n");
+			}else if (!p2) {
+				p2 = event.peer;
+				printf("Registered player 2\n");
+			} else {
+				printf("A third player tried to join but was rejected\n");
+			}
+			
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
 			printf ("A packet of length %u containing %c was received from %s on channel %u.\n",
@@ -76,25 +93,42 @@ void handleEvents(ENetHost* server) {
 					event.packet -> data,
 					event.peer -> data,
 					event.channelID);
-			{
-				int c = 0;
-				while(c < event.packet->dataLength) {
-					printf("%x", (unsigned char) event.packet->data[c]);
-				}
-			}
+			//send packet to the other player that did not send it.
+			send(event);
 			/* Clean up the packet now that we're done using it. */
 			enet_packet_destroy (event.packet);
 			
 			break;
 		   
 		case ENET_EVENT_TYPE_DISCONNECT:
-			printf ("%s disconnected.\n", event.peer -> data);
-			/* Reset the peer's client information. */
-			event.peer -> data = NULL;
-			break;
-		case ENET_EVENT_TYPE_NONE:
-			printf("NOTHING HAPPENED\n");
+			//register players
+			if(event.peer->data == p1->data){
+				printf("Player 1 disconnected\n");
+				p1 = NULL;
+			} else if( event.peer->data == p2->data ) {
+				printf("Player 2 disconnected\n");
+				p2 = NULL;
+			}
 		}
 	}
 }
 
+void send(ENetEvent e) {
+	if(p2 && p2) {
+		printf("Transmitting packet\n");
+	}else {
+		printf("Dropping packet\n");
+		return;
+	}	
+
+	if(e.peer->data == p1->data) {
+		printf("Sending Player 1's data to Player 2\n");
+		enet_peer_send(p2, 0, e.packet);
+		enet_host_flush(server);
+	}else if(e.peer->data == p2->data) {
+		printf("Sending Player 2's data to Player 1\n");
+		enet_peer_send(p1, 0, e.packet);
+		enet_host_flush(server);
+	}
+
+}
