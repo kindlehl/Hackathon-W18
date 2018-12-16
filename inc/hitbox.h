@@ -9,17 +9,13 @@ extern sf::Vector2i screenSize;
 
 class Hitbox : public sf::Drawable {
 	public:
-		//assign each object a unique ID
-		Hitbox() : ObjID(numObjects++){};
-		int ObjID;
-		static int numObjects;
+		Hitbox() {};
 		virtual ~Hitbox() {};
 		bool operator< (const Hitbox& H) const;
 		float value() const;
 		virtual void draw(sf::RenderTarget&, sf::RenderStates) const = 0;
 		virtual sf::IntRect getHitbox() const = 0;
 };
-
 
 struct hitboxCompare {
 	bool operator() (const Hitbox* l, const Hitbox* r) const;
