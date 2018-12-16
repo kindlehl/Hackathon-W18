@@ -64,7 +64,7 @@ void handleEvents(ENetHost* server) {
 	//std::cout << "Checking event queue" << std::endl;
 	ENetEvent event;
 	/* Wait up to 1000 milliseconds for an event. */
-	while (enet_host_service (server, & event, 1000) > 0)
+	while (enet_host_service (server, & event, 0) > 0)
 	{
 		std::cout << "Found event" << std::endl;
 
@@ -101,7 +101,6 @@ void handleEvents(ENetHost* server) {
 			break;
 		   
 		case ENET_EVENT_TYPE_DISCONNECT:
-			printf ("%s disconnected.\n", event.peer -> data);
 			//register players
 			if(event.peer->data == p1->data){
 				printf("Player 1 disconnected\n");
@@ -110,9 +109,6 @@ void handleEvents(ENetHost* server) {
 				printf("Player 2 disconnected\n");
 				p2 = NULL;
 			}
-			break;
-		case ENET_EVENT_TYPE_NONE:
-			printf("NOTHING HAPPENED\n");
 		}
 	}
 }
