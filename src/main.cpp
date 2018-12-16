@@ -139,22 +139,26 @@ int main (int argc, char** argv) {
 		
 		// load bullet vectors 
 		if (isFiringRight) {
-			Bullet newBullet(player.hitbox);
+			sf::Vector2i velocity(10, 0);
+			Bullet newBullet(player.hitbox, velocity);
 			bulletVecRight.push_back(newBullet);
 			isFiringRight = false;
 		}
 		if (isFiringLeft) {
-			Bullet newBullet(player.hitbox);
+			sf::Vector2i velocity(-10, 0);
+			Bullet newBullet(player.hitbox, velocity);
 			bulletVecLeft.push_back(newBullet);
 			isFiringLeft = false;
 		}
 		if (isFiringUp) {
-			Bullet newBullet(player.hitbox);
+			sf::Vector2i velocity(0, -10);
+			Bullet newBullet(player.hitbox, velocity);
 			bulletVecUp.push_back(newBullet);
 			isFiringUp = false;
 		}
 		if (isFiringDown) {
-			Bullet newBullet(player.hitbox);
+			sf::Vector2i velocity(0, 10);
+			Bullet newBullet(player.hitbox, velocity);
 			bulletVecDown.push_back(newBullet);
 			isFiringDown = false;
 		}
@@ -162,19 +166,19 @@ int main (int argc, char** argv) {
 		//fire bullets from vectors
 		for (int i = 0; i < bulletVecRight.size(); i++) {
 			window.draw(bulletVecRight[i]);
-			bulletVecRight[i].fireRight(10);
+			bulletVecRight[i].update();
 		}
 		for (int i = 0; i < bulletVecLeft.size(); i++) {
 			window.draw(bulletVecLeft[i]);
-			bulletVecLeft[i].fireLeft(10);
+			bulletVecLeft[i].update();
 		}
 		for (int i = 0; i < bulletVecUp.size(); i++) {
 			window.draw(bulletVecUp[i]);
-			bulletVecUp[i].fireUp(10);
+			bulletVecUp[i].update();
 		}
 		for (int i = 0; i < bulletVecDown.size(); i++) {
 			window.draw(bulletVecDown[i]);
-			bulletVecDown[i].fireDown(10);
+			bulletVecDown[i].update();
 		}
 
         window.draw(player);

@@ -8,13 +8,10 @@ class Bullet : public Hitbox
 {
 public:
 
-	Bullet(sf::IntRect);
+	Bullet(sf::IntRect, sf::Vector2i);
 	Bullet(int, int, int, int);
 	sf::IntRect hitbox;
-	void fireRight(int);
-	void fireLeft(int);
-	void fireUp(int);
-	void fireDown(int);
+	void update();
 	sf::IntRect getHitbox() const;
 	void draw(sf::RenderTarget & target, sf::RenderStates states) const;
 	//virtual void draw(sf::RenderWindow &window);
@@ -22,6 +19,8 @@ public:
 protected:
 private:
 	sf::RectangleShape bullet;
+	int xVel;
+	int yVel;
 
 };
 
