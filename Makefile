@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=--std=c++14 -L/lib -L/usr/local/lib -I/usr/include -g
-CLINK= -lsfml-graphics -lsfml-window -lsfml-system -lenet
+CLINK= -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system -lenet
 
 all: game server
 

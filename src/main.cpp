@@ -38,7 +38,7 @@ int main (int argc, char** argv) {
 	window.setFramerateLimit(60);
 
 	sf::Music music;
-	if (!music.openFromFile("Showdown.wav"))
+	if (!music.openFromFile("sounds/Showdown.wav"))
 		return -1; // error
 	music.play();
 	
@@ -190,42 +190,42 @@ int main (int argc, char** argv) {
 		// load bullet vectors 
 		if (bulletDir == Right) {
 			sf::Vector2i velocity(10, 0);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVec.push_back(newBullet);
 			break;
 		} else if (bulletDir == Left) {
 			sf::Vector2i velocity(-10, 0);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVec.push_back(newBullet);
 			break;
 		} else if (bulletDir == Up) {
 			sf::Vector2i velocity(0, -10);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVec.push_back(newBullet);
 			break;
 		} else if (bulletDir == Down) {
 			sf::Vector2i velocity(0, 10);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVec.push_back(newBullet);
 			break;
 		} else if (bulletDir == UpRight) {
 			sf::Vector2i velocity(6, -6);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVec.push_back(newBullet);
 			break;
 		} else if (bulletDir == DownRight) {
 			sf::Vector2i velocity(6, 6);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVec.push_back(newBullet);
 			break;
 		} else if (bulletDir == DownLeft) {
 			sf::Vector2i velocity(-6, 6);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVec.push_back(newBullet);
 			break;
 		} else if (bulletDir == UpLeft) {
 			sf::Vector2i velocity(-6, -6);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVec.push_back(newBullet);
 			break;
 		}
