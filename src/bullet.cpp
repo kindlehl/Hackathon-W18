@@ -12,6 +12,13 @@ Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity) {
 
 	xVel = velocity.x;
 	yVel = velocity.y;
+
+	static sf::SoundBuffer shootSoundBuffer;
+	static sf::Sound shootSound;
+
+	shootSoundBuffer.loadFromFile("Gun+Silencer.wav");
+	shootSound.setBuffer(shootSoundBuffer);
+	shootSound.play();
 }
 Bullet::Bullet(int leftIn, int topIn, int widthIn, int heightIn)
 {
