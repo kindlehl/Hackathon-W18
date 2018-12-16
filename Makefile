@@ -4,7 +4,7 @@ CLINK= -lsfml-graphics -lsfml-window -lsfml-system -lenet
 
 all: game server
 
-game: player.o environment.o src/main.cpp 
+game: player.o environment.o connection.o src/main.cpp 
 	$(CC) $(CFLAGS) *.o src/main.cpp -o game $(CLINK)
 
 environment.o: src/environment.cpp inc/environment.h hitbox.o

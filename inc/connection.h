@@ -4,28 +4,39 @@
 #include "../inc/player.h"
 
 #include <utility>
+#include <string>
 #include <enet/enet.h>
 
 enum p_type {
 	NEW, // start new session/game
 	CONNECT, //connect to a session
 	DISCONNECT, //disconnect from session
-	UPDATE	//game/object updates
+	UPDATE,	//game/object updates
+	CREATE	//game/object creation
+};
+
+enum create_type {
+	PLAYER,
+	BULLET
 };
 
 struct Packet {
 	int sessionID;
-	unsigned char type;
+	p_type type;
 	char* payload;
 };
 
 class Connection {
 public:
 	Connection(Packet);
+	Connection(ENetHost* client, ENetPeer* server, p_type t, Player p, std::string map);
 	~Connection();
-	std::pair<Player, Player> clients;
+	ENetHost* client;
+	ENetPeer* server;
+	void sendNewPlayer(Player);
+	void sendNewSession(Player);
+	void sendNewSession(int sID, std::string map);
 	void update();
-	void handleClients();
 	bool active();
 	int sessionID;
 };

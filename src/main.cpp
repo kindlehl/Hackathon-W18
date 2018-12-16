@@ -6,16 +6,19 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <string>
 
 #include "../inc/player.h"
 #include "../inc/environment.h"
+#include "../inc/connection.h"
 
 using namespace std;
 
 vector<Hitbox*> envs;	//Environment objects like walls
 sf::Vector2i screenSize(800,800);
 
-bool establishConnection();
+bool establishConnection(ENetPeer**, ENetHost**);
+sf::RectangleShape loadMap(string map);
 
 int main (int argc, char** argv) {
     // Create the main window
@@ -27,39 +30,24 @@ int main (int argc, char** argv) {
 	window.setView(view);
 	window.setFramerateLimit(60);
 
+	ENetPeer* server; 
+	ENetHost* client;
+	
 	//Connect to server 
-	if(!establishConnection()){
+	if(!establishConnection(&server, &client)){
 		return 1;
 	}
 
+	string map = "maps/test.map";
+
+	auto background = loadMap(map);
+
+	//create player locally and on the server
 	Player player;
+	Connection connection(client, server, NEW, player, map);
 
-
-	int num_tiles;
-	string background_path;
-	ifstream test_map("maps/test.map"); //map I'm using to test with
-	
-	test_map >> background_path;
-	test_map >> num_tiles;
-
-	//player is always at front
-	//of array, so always drawn first
 	envs.push_back(&player);
 	
-	//fill map with environmental stuff until an invalid env is found (END OF FILE also)
-	while(num_tiles--) {
-		envs.push_back(new Env(test_map));
-	}
-
-	sf::RectangleShape background;
-	sf::Texture* background_tex = new sf::Texture;
-	background_tex->loadFromFile(background_path);
-
-	background.setTexture(background_tex);
-	background.setPosition(sf::Vector2f(0,0));
-	background.setSize(static_cast<sf::Vector2f>(window.getSize()));
-
-
     while (window.isOpen())
     {
         // Clear screen
@@ -99,7 +87,7 @@ int main (int argc, char** argv) {
     }
     return EXIT_SUCCESS;
 }
-bool establishConnection() {
+bool establishConnection(ENetPeer** server, ENetHost** client){
 
 	if (enet_initialize () != 0) {
         fprintf (stderr, "An error occurred while initializing ENet.\n");
@@ -109,26 +97,61 @@ bool establishConnection() {
 
 	//set up address to local server
 	ENetAddress address;
-	enet_address_set_host(&address, "localhost");
+	enet_address_set_host(&address, "hack.hunterlannon.net");
 	address.port = 9000;
 
 	//create client to send data
-	ENetHost* client = enet_host_create(NULL, 1, 2, 0,0);
+	*client = enet_host_create(NULL, 1, 2, 0,0);
 	//create peer to send data to server
-	ENetPeer* server = enet_host_connect(client, &address, 2, 0);
+	*server = enet_host_connect(*client, &address, 2, 0);
 
-	if(server == NULL){
+	if(*server == NULL){
 		cerr << "Error connecting to server" << endl;
 	}
 
 	//establish connection to the server
 	ENetEvent netevent;
-	if (enet_host_service (client, &netevent, 5000) > 0 && netevent.type == ENET_EVENT_TYPE_CONNECT) {
+	if (enet_host_service (*client, &netevent, 5000) > 0 && netevent.type == ENET_EVENT_TYPE_CONNECT) {
 		puts ("Connection to some.server.net:1234 succeeded.");
 	}
 
-	//send packet to create session
+	////send packet to create session
+	//[> Create a reliable packet of size 7 containing "packet\0" <]
+	//ENetPacket * packet = enet_packet_create ("packet", 
+											  //strlen ("packet") + 1, 
+											  //ENET_PACKET_FLAG_RELIABLE);
+	//[> Send the packet to the peer over channel id 0. <]
+	//[> One could also broadcast the packet by         <]
+	//[> enet_host_broadcast (host, 0, packet);         <]
+	//enet_peer_send (server, 0, packet);
+	//[> One could just use enet_host_service() instead. <]
+	//THIS IS NEEDED TO SEND DATA
+	enet_host_flush (*client);
 	
+	return true;
 
+}
 
+sf::RectangleShape loadMap(string map){
+	int num_tiles;
+	string background_path;
+	ifstream test_map(map); //map I'm using to test with
+	
+	test_map >> background_path;
+	test_map >> num_tiles;
+
+	//fill map with environmental stuff until an invalid env is found (END OF FILE also)
+	while(num_tiles--) {
+		envs.push_back(new Env(test_map));
+	}
+
+	sf::RectangleShape background;
+	sf::Texture* background_tex = new sf::Texture;
+	background_tex->loadFromFile(background_path);
+
+	background.setTexture(background_tex);
+	background.setPosition(sf::Vector2f(0,0));
+	background.setSize(static_cast<sf::Vector2f>(screenSize));
+	
+	return background;
 }
