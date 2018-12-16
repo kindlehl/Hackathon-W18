@@ -320,7 +320,6 @@ bool Player::processMovement(sf::Vector2i& offset) {
 		spritebox.move(offset.x, offset.y);
 	}
 
-
 	return collision;
 }
 
