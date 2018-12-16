@@ -28,7 +28,7 @@ Player::Player() {
 
 
 	//set sprite relative to its hitbox using black magic
-	spritebox.setPosition(hitbox.left + 1.41 * hitbox.width, hitbox.top - 1.41 * hitbox.height - hitbox.height / 2);
+	spritebox.setPosition(hitbox.left + 1.61 * hitbox.width, hitbox.top - 1.41 * hitbox.height - hitbox.height / 2);
 
 	//load cowboy texture from file
 	cowboy.loadFromFile("img/player.png");
