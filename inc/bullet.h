@@ -2,6 +2,7 @@
 #define BULLET_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "../inc/hitbox.h"
 #include "../inc/connection.h"
 
@@ -18,6 +19,7 @@ public:
 	sf::IntRect getHitbox() const;
 	void draw(sf::RenderTarget & target, sf::RenderStates states) const;
 	//virtual void draw(sf::RenderWindow &window);
+	
 
 	sf::RectangleShape bullet;
 	int xVel;

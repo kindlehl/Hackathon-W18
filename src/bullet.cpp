@@ -13,6 +13,13 @@ Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity, ENetHost* client, ENet
 	xVel = velocity.x;
 	yVel = velocity.y;
 
+	static sf::SoundBuffer shootSoundBuffer;
+	static sf::Sound shootSound;
+
+	shootSoundBuffer.loadFromFile("Gun+Silencer.wav");
+	shootSound.setBuffer(shootSoundBuffer);
+	shootSound.play();
+
 	sendCreateSignal(client, server);
 }
 
@@ -32,7 +39,6 @@ Bullet::Bullet(char* packet) {
 	bullet.setPosition(sf::Vector2f(hitbox.left, hitbox.top));
 	bullet.setSize(sf::Vector2f(hitbox.width, hitbox.height));
 	bullet.setFillColor(sf::Color::Red);
-}
 
 void Bullet::sendCreateSignal(ENetHost* client, ENetPeer* server) {
 	char* data;

@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
+#include <SFML/Audio.hpp>
 #include <enet/enet.h>
 
 #include <fstream>
@@ -35,6 +36,11 @@ int main (int argc, char** argv) {
 	window.setView(view);
 	window.setFramerateLimit(60);
 
+	sf::Music music;
+	if (!music.openFromFile("Showdown.wav"))
+		return -1; // error
+	music.play();
+	
 	ENetPeer* server; 
 	ENetHost* client;
 
