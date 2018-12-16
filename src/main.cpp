@@ -59,7 +59,7 @@ int main (int argc, char** argv) {
 	vector<Bullet> bulletVec;
 	enum direction {
 		None,
-		Up,
+		Up, 
 		Right,
 		Down,
 		Left,
@@ -103,6 +103,9 @@ int main (int argc, char** argv) {
 			} else if (event.type == sf::Event::MouseMoved) {
 				sf::Vector2i pixelCoord(event.mouseMove.x, event.mouseMove.y);
 				cout << "x: " << window.mapPixelToCoords(pixelCoord).x << "y: " << window.mapPixelToCoords(pixelCoord).y << std::endl;
+			}
+			if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
+				player.action(event);
 			}
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
 				switch (player.currentState) {
@@ -186,49 +189,23 @@ int main (int argc, char** argv) {
 			window.draw(*e);
 		}
 
-
+		sf::Vector2i velocity;
 		// load bullet vectors 
-		if (bulletDir == Right) {
-			sf::Vector2i velocity(10, 0);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVec.push_back(newBullet);
-			break;
-		} else if (bulletDir == Left) {
-			sf::Vector2i velocity(-10, 0);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVec.push_back(newBullet);
-			break;
-		} else if (bulletDir == Up) {
-			sf::Vector2i velocity(0, -10);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVec.push_back(newBullet);
-			break;
-		} else if (bulletDir == Down) {
-			sf::Vector2i velocity(0, 10);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVec.push_back(newBullet);
-			break;
-		} else if (bulletDir == UpRight) {
-			sf::Vector2i velocity(6, -6);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVec.push_back(newBullet);
-			break;
-		} else if (bulletDir == DownRight) {
-			sf::Vector2i velocity(6, 6);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVec.push_back(newBullet);
-			break;
-		} else if (bulletDir == DownLeft) {
-			sf::Vector2i velocity(-6, 6);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVec.push_back(newBullet);
-			break;
-		} else if (bulletDir == UpLeft) {
-			sf::Vector2i velocity(-6, -6);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVec.push_back(newBullet);
-			break;
+		if (bulletDir == Right) velocity = sf::Vector2i(10, 0);
+		else if (bulletDir == Left) velocity = sf::Vector2i(-10, 0);
+		else if (bulletDir == Up) velocity = sf::Vector2i(0, -10);
+		else if (bulletDir == Down) velocity = sf::Vector2i(0, 10);
+		else if (bulletDir == UpRight) velocity = sf::Vector2i(6, -6);
+		else if (bulletDir == DownRight) velocity = sf::Vector2i(6, 6);
+		else if (bulletDir == DownLeft) velocity = sf::Vector2i(-6, 6);
+		else if (bulletDir == UpLeft) velocity = sf::Vector2i(-6, -6);
+
+		if(velocity.x || velocity.y){
+			bulletVec.push_back(Bullet(player.hitbox, velocity, client, server));
+			bulletDir = None;
+			velocity.x = velocity.y = 0;
 		}
+
 
 		//fire bullets from vectors
 		for (int i = 0; i < bulletVec.size(); i++) {
