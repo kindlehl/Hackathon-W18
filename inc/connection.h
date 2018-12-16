@@ -3,6 +3,7 @@
 
 #include <utility>
 #include <cstring>
+#include <enet/enet.h>
 
 enum create_type {
 	PLAYER,
