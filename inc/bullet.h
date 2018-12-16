@@ -6,6 +6,19 @@
 #include "../inc/hitbox.h"
 #include "../inc/connection.h"
 
+//bullet containers and bools
+enum direction {
+	None,
+	Up, 
+	Right,
+	Down,
+	Left,
+	UpRight,
+	DownRight,
+	UpLeft,
+	DownLeft
+};
+
 class Bullet : public Hitbox
 {
 public:
@@ -16,6 +29,7 @@ public:
 	sf::IntRect hitbox;
 	void update();
 	void sendCreateSignal(ENetHost*, ENetPeer*); //send over network
+	Hitbox* checkCollision(std::vector<Hitbox*>& envs);
 	sf::IntRect getHitbox() const;
 	void draw(sf::RenderTarget & target, sf::RenderStates states) const;
 	//virtual void draw(sf::RenderWindow &window);

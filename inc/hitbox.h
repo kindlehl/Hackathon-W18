@@ -6,6 +6,10 @@
 
 extern sf::Vector2i screenSize;
 
+enum type_enum {
+	ENVIRONMENT_TYPE,
+	PLAYER_TYPE
+};
 
 class Hitbox : public sf::Drawable {
 	public:
@@ -15,6 +19,7 @@ class Hitbox : public sf::Drawable {
 		float value() const;
 		virtual void draw(sf::RenderTarget&, sf::RenderStates) const = 0;
 		virtual sf::IntRect getHitbox() const = 0;
+		type_enum type = ENVIRONMENT_TYPE;
 };
 
 struct hitboxCompare {

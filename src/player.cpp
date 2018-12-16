@@ -4,6 +4,7 @@
 Player::Player() {
 	//player defaults to the walkingRight position
 	currentState = previousState = Idle;
+	type = PLAYER_TYPE;
 	
 	hitbox.width = 40;
 	hitbox.height = 40;

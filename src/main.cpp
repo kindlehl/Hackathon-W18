@@ -19,7 +19,7 @@
 using namespace std;
 
 vector<Hitbox*> envs;	//Environment objects like walls
-vector<Bullet*> allBullets;
+vector<Bullet> bulletVec;
 sf::Vector2i screenSize(800,800);
 
 bool establishConnection(ENetPeer**, ENetHost**);
@@ -54,32 +54,15 @@ int main (int argc, char** argv) {
 	Rain matrix_background;
 
 	string map = "maps/test.map";
-
-	//bullet containers and bools
-	vector<Bullet> bulletVec;
-	enum direction {
-		None,
-		Up, 
-		Right,
-		Down,
-		Left,
-		UpRight,
-		DownRight,
-		UpLeft,
-		DownLeft
-	};
 	direction bulletDir = None;
 
 	auto background = loadMap(map);
 
-	//left wall
-	envs.push_back(new InvisWall(sf::IntRect(-100, 0, 100, screenSize.y)));
-	//right wall
-	envs.push_back(new InvisWall(sf::IntRect(screenSize.x, 0, 100, screenSize.y)));
-	//top wall
-	envs.push_back(new InvisWall(sf::IntRect(0, -100, screenSize.x, 100)));
-	//bottom wall
-	envs.push_back(new InvisWall(sf::IntRect(0, screenSize.y, screenSize.x, 100)));
+	
+	envs.push_back(new InvisWall(sf::IntRect(-100, 0, 100, screenSize.y)));//left wall
+	envs.push_back(new InvisWall(sf::IntRect(screenSize.x, 0, 100, screenSize.y)));	//right wall
+	envs.push_back(new InvisWall(sf::IntRect(0, -100, screenSize.x, 100)));//top wall
+	envs.push_back(new InvisWall(sf::IntRect(0, screenSize.y, screenSize.x, 100)));	//bottom wall
 
 	//create player locally and on the server
 	Player player;
@@ -170,14 +153,23 @@ int main (int argc, char** argv) {
 		player.sendUpdate(server, client);
 		checkServer(enemy, client);
 
-		for(auto& b : allBullets) {
-			b->update();
+		for(auto iter = bulletVec.begin(); iter < bulletVec.end(); iter++) {
+			iter->update();
+			Hitbox* hitEnv = iter->checkCollision(envs);
+			if(hitEnv != NULL){
+				if(hitEnv->type == PLAYER_TYPE){
+					player.rewinding = true;
+				}
+				bulletVec.erase(iter);
+			}
 		}
+
+
 
 		player.update();
 		enemy.update();
-
 		matrix_background.update();
+
 		window.draw(matrix_background);
 		window.draw(background);
 		
@@ -203,7 +195,6 @@ int main (int argc, char** argv) {
 		if(velocity.x || velocity.y){
 			bulletVec.push_back(Bullet(player.hitbox, velocity, client, server));
 			bulletDir = None;
-			velocity.x = velocity.y = 0;
 		}
 
 
@@ -213,9 +204,9 @@ int main (int argc, char** argv) {
 			bulletVec[i].update();
 		}
 
-		for(auto& b : allBullets) {
-			cout << "Bullet at coords x, y: " << b->bullet.getPosition().x << ", " << b->bullet.getPosition().y << endl;
-			window.draw(*b);
+		for(auto& b : bulletVec) {
+			cout << "Bullet at coords x, y: " << b.bullet.getPosition().x << ", " << b.bullet.getPosition().y << endl;
+			window.draw(b);
 		}
 		
         window.draw(player);
@@ -295,7 +286,7 @@ void checkServer(Player& enemy, ENetHost* client) {
 				enemy.updateFromBuffer((char*)event.packet->data+4);
 			}else if (type == BULLET) {
 				cout << "REQUEST TO CREATE BULLET RECEIVED" << endl;
-				allBullets.push_back(new Bullet((char*)event.packet->data+4));
+				bulletVec.push_back(Bullet((char*)event.packet->data+4));
 			}
 
 			enet_packet_destroy (event.packet);

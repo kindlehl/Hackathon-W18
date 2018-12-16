@@ -41,6 +41,14 @@ Bullet::Bullet(char* packet) {
 	bullet.setFillColor(sf::Color::Red);
 }
 
+Hitbox* Bullet::checkCollision(std::vector<Hitbox*>& envs) {
+	for(auto& e : envs) {
+		if(hitbox.intersects(e->getHitbox()))
+			return e;
+	}
+	return NULL;
+}
+
 void Bullet::sendCreateSignal(ENetHost* client, ENetPeer* server) {
 	char* data;
 	char* base = data = new char[200];
