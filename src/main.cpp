@@ -18,7 +18,7 @@ vector<Hitbox*> envs;	//Environment objects like walls
 sf::Vector2i screenSize(800,800);
 
 bool establishConnection(ENetPeer**, ENetHost**);
-void checkServer(Player, ENetHost*);
+void checkServer(Player&, ENetHost*);
 sf::RectangleShape loadMap(string map);
 
 int main (int argc, char** argv) {
@@ -71,10 +71,10 @@ int main (int argc, char** argv) {
 			}
         }
 
+		player.sendUpdate(server, client);
 		checkServer(enemy, client);
 
 		player.update();
-		player.sendUpdate(server, client);
 		enemy.update();
 
 		window.draw(background);
@@ -148,7 +148,7 @@ sf::RectangleShape loadMap(string map){
 	return background;
 }
 
-void checkServer(Player enemy, ENetHost* client) {
+void checkServer(Player& enemy, ENetHost* client) {
 	ENetEvent event;
 	/* check for incoming messages */
 	while (enet_host_service (client, & event, 0) > 0)
@@ -161,6 +161,9 @@ void checkServer(Player enemy, ENetHost* client) {
 			if(type == PLAYER) {
 				std::cout << "Recieved player update from server" << std::endl;
 				enemy.updateFromBuffer((char*)event.packet->data+4);
+				cout << "Enemy hitbox: " << enemy.getHitbox().left <<
+				" " << enemy.getHitbox().top << " " << enemy.getHitbox().width
+				<< " " << enemy.getHitbox().height << endl;
 			}
 
 			enet_packet_destroy (event.packet);

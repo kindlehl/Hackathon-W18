@@ -48,6 +48,11 @@ void Player::sendUpdate(ENetPeer* server, ENetHost* client) {
 	shoveData(data, &hitbox.width, 4);
 	shoveData(data, &hitbox.height, 4);
 	
+	//put spritebox position into buffer
+	auto coords = spritebox.getPosition();
+	shoveData(data, &coords.x, 4);
+	shoveData(data, &coords.y, 4);
+	
 	//put states into buffer
 	shoveData(data, &currentState, 4);
 	shoveData(data, &previousState, 4);
@@ -76,6 +81,14 @@ void Player::updateFromBuffer(char* buf) {
 	pullData(buf, &hitbox.top, 4);
 	pullData(buf, &hitbox.width, 4);
 	pullData(buf, &hitbox.height, 4);
+
+	//extract sprite position
+	sf::Vector2f pos;
+	pullData(buf, &pos.x, 4);
+	pullData(buf, &pos.y, 4);
+
+	//set sprite position
+	spritebox.setPosition(pos);
 	
 	//put states into Datafer
 	pullData(buf, &currentState, 4);
