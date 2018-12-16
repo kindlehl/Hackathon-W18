@@ -41,7 +41,7 @@ public:
 	Player(char*);
 	~Player() {};
 	
-	State currentState, previousState;
+	State currentState, previousState, facingState;
 
 	void printDebug();
 
