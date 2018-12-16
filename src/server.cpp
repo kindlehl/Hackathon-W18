@@ -1,7 +1,8 @@
-#include "../inc/server.h"
 #include "../inc/connection.h"
-#include <SFML/Graphics.hpp>
 
+#include <enet/enet.h>
+#include <iostream>
+#include <utility>
 #include <vector>
 
 using namespace std;
@@ -9,9 +10,6 @@ using namespace std;
 //peers (players) 1 and 2
 ENetPeer *p1 = NULL, *p2 = NULL;
 ENetHost* server;
-
-vector<Hitbox*> envs; //used to appease the mighty linker
-sf::Vector2i screenSize(800,800);
 
 void handleEvents(ENetHost* server);
 void send(ENetEvent);
@@ -44,18 +42,10 @@ int main(int argc, char** argv) {
 		exit (EXIT_FAILURE);
 	}
 
-	vector<Connection> sessions;
 
 
 	while(1) {
-		
 		handleEvents(server);
-
-		//for(Connection& c : sessions) {
-			//if(c.active()) {
-				//c.handleClients();
-			//}					
-		//}		
 	}
 	enet_host_destroy(server);
 }

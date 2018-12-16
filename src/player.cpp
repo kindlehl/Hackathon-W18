@@ -28,29 +28,66 @@ Player::Player() {
 	//slap current animation frame onto the spritebox
 	spritebox.setTextureRect(frame);
 }
-
-Player::Player(char* payload) {
-
-	memcpy(&ObjID, payload, 1); //set object ID from payload
-
-	//set hitbox from payload
-	memcpy(&hitbox.left, payload + 1, 2);
-	memcpy(&hitbox.top, payload + 3, 2);
-	memcpy(&hitbox.width, payload + 5, 2);
-	memcpy(&hitbox.height, payload + 7, 2);
-
-	//set player's state
-	memcpy(&currentState, payload + 9, 4);
-}
-
 sf::IntRect Player::getHitbox() const {
 	return hitbox;
 }
 
-////function to update your character to the enemy/server
-//void Player::Transmit() {
+////function to update your character to the enemy
+void Player::sendUpdate(ENetPeer* server, ENetHost* client) {
+	//store 2 pointers to buffer
+	char* data;
+	char* base = data = new char[200];
+	int type = PLAYER;
+	shoveData(data, &type, 4);
+
+	//put hitbox into buffer
+	//This function advances the data
+	//pointer each time its called.
+	shoveData(data, &hitbox.left, 4);
+	shoveData(data, &hitbox.top, 4);
+	shoveData(data, &hitbox.width, 4);
+	shoveData(data, &hitbox.height, 4);
 	
-//}
+	//put states into buffer
+	shoveData(data, &currentState, 4);
+	shoveData(data, &previousState, 4);
+	
+	//put animation frame into buffer
+	shoveData(data, &frame.left, 4);
+	shoveData(data, &frame.top, 4);
+	shoveData(data, &frame.width, 4);
+	shoveData(data, &frame.height, 4);
+
+	*data = '\0';
+
+	//create packet
+	ENetPacket* packet = enet_packet_create(base, data - base, ENET_PACKET_FLAG_RELIABLE);
+
+	enet_peer_send(server, 0, packet);
+	enet_host_flush(client);
+}
+
+//buf should have NOTHING but player data, not even the header byte
+void Player::updateFromBuffer(char* buf) {
+	//put hitbox into Datafer
+	//This function advances the Data
+	//pointer each time its called.
+	pullData(buf, &hitbox.left, 4);
+	pullData(buf, &hitbox.top, 4);
+	pullData(buf, &hitbox.width, 4);
+	pullData(buf, &hitbox.height, 4);
+	
+	//put states into Datafer
+	pullData(buf, &currentState, 4);
+	pullData(buf, &previousState, 4);
+	
+	//reset animation frame
+	pullData(buf, &frame.left, 4);
+	pullData(buf, &frame.top, 4);
+	pullData(buf, &frame.width, 4);
+	pullData(buf, &frame.height, 4);
+
+}
 
 ////function to update enemy player's character from server
 //void Player::Receive() {

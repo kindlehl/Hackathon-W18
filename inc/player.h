@@ -2,10 +2,12 @@
 #define PLAYER_H
 
 #include <SFML/Graphics.hpp>
+#include <enet/enet.h>
 #include <vector>
 #include <cstring>
 
 #include "../inc/environment.h"
+#include "../inc/connection.h"
 #include "../inc/hitbox.h"
 
 extern std::vector<Hitbox*> envs;
@@ -51,7 +53,9 @@ public:
 
 	void action(sf::Event);
 	void update();
+	void updateFromBuffer(char*);
 	void move();
+	void sendUpdate(ENetPeer*, ENetHost*);
 	void resetFrame(State playerState);
 private:
 	bool processMovement(sf::Vector2i& offset);

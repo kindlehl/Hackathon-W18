@@ -18,6 +18,7 @@ vector<Hitbox*> envs;	//Environment objects like walls
 sf::Vector2i screenSize(800,800);
 
 bool establishConnection(ENetPeer**, ENetHost**);
+void checkServer(Player, ENetHost*);
 sf::RectangleShape loadMap(string map);
 
 int main (int argc, char** argv) {
@@ -45,9 +46,10 @@ int main (int argc, char** argv) {
 	//create player locally and on the server
 	Player player;
 	Player enemy;
-	Connection connection(client, server, NEW, player, map);
+
 
 	envs.push_back(&player);
+	envs.push_back(&enemy);
 	
     while (window.isOpen())
     {
@@ -69,16 +71,17 @@ int main (int argc, char** argv) {
 			}
         }
 
+		checkServer(enemy, client);
+
 		player.update();
+		enemy.update();
 
 		window.draw(background);
 		
-		//move drawables into proper drawing order
-		//player is never sorted into the array
-		//because he should be drawn first each time
+		//sort environmental objects based on their z-index
 		sort(envs.begin(), envs.end(), hitboxCompare());
 
-		//draw environmental things
+		//draw all environmental things
 		for(auto &e : envs ) {
 			window.draw(*e);
 		}
@@ -115,19 +118,6 @@ bool establishConnection(ENetPeer** server, ENetHost** client){
 	if (enet_host_service (*client, &netevent, 5000) > 0 && netevent.type == ENET_EVENT_TYPE_CONNECT) {
 		puts ("Connection to some.server.net:1234 succeeded.");
 	}
-
-	////send packet to create session
-	//[> Create a reliable packet of size 7 containing "packet\0" <]
-	//ENetPacket * packet = enet_packet_create ("packet", 
-											  //strlen ("packet") + 1, 
-											  //ENET_PACKET_FLAG_RELIABLE);
-	//[> Send the packet to the peer over channel id 0. <]
-	//[> One could also broadcast the packet by         <]
-	//[> enet_host_broadcast (host, 0, packet);         <]
-	//enet_peer_send (server, 0, packet);
-	//[> One could just use enet_host_service() instead. <]
-	//THIS IS NEEDED TO SEND DATA
-	enet_host_flush (*client);
 	
 	return true;
 
@@ -155,4 +145,24 @@ sf::RectangleShape loadMap(string map){
 	background.setSize(static_cast<sf::Vector2f>(screenSize));
 	
 	return background;
+}
+
+void checkServer(Player enemy, ENetHost* client) {
+	ENetEvent event;
+	/* check for incoming messages */
+	while (enet_host_service (client, & event, 0) > 0)
+	{
+		if(event.type == ENET_EVENT_TYPE_RECEIVE) {
+			std::cout << "Received update from server" << std::endl;
+	
+			int type;
+			memcpy(&type, event.packet->data, 4);
+			if(type == PLAYER) {
+				std::cout << "Recieved player update from server" << std::endl;
+				enemy.updateFromBuffer((char*)event.packet->data+4);
+			}
+
+			enet_packet_destroy (event.packet);
+		}	
+	}
 }
