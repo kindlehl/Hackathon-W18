@@ -5,12 +5,15 @@
 #include <enet/enet.h>
 #include <vector>
 #include <cstring>
+#include <ctime>
+#include <random>
 
 #include "../inc/environment.h"
 #include "../inc/connection.h"
 #include "../inc/hitbox.h"
 
 extern std::vector<Hitbox*> envs;
+extern sf::Vector2i screenSize;
 
 enum State {
 	Idle,

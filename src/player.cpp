@@ -5,10 +5,27 @@ Player::Player() {
 	//player defaults to the walkingRight position
 	currentState = previousState = Idle;
 	
-	hitbox.left = 100;
-	hitbox.top = 100;
 	hitbox.width = 40;
 	hitbox.height = 40;
+
+	bool tryagain = false;
+
+	//set unique coordinates
+	do {
+		hitbox.left = rand() % (screenSize.x - hitbox.width);
+		hitbox.top = rand() % (screenSize.y - hitbox.height);
+
+		for(auto& e : envs) {
+			if(hitbox.intersects(e->getHitbox())){
+				tryagain = true;
+				continue;
+			}
+		}
+		
+		tryagain = false;
+
+	} while(tryagain);
+
 
 	//set sprite relative to its hitbox using black magic
 	spritebox.setPosition(hitbox.left + 1.41 * hitbox.width, hitbox.top - 1.41 * hitbox.height - hitbox.height / 2);
@@ -380,11 +397,11 @@ void Player::move() {
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	target.draw(spritebox, states);
 
-	sf::RectangleShape hitboxOutline;
-	hitboxOutline.setSize(sf::Vector2f(hitbox.width, hitbox.height));
-	hitboxOutline.setPosition(hitbox.left, hitbox.top);
-	hitboxOutline.setFillColor(sf::Color(150, 50, 250));
-	target.draw(hitboxOutline);
+	//sf::RectangleShape hitboxOutline;
+	//hitboxOutline.setSize(sf::Vector2f(hitbox.width, hitbox.height));
+	//hitboxOutline.setPosition(hitbox.left, hitbox.top);
+	//hitboxOutline.setFillColor(sf::Color(150, 50, 250));
+	//target.draw(hitboxOutline);
 
 }
 

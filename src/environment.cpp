@@ -70,9 +70,9 @@ void Env::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	target.draw(spritebox, states);
 
 	
-	sf::RectangleShape hitboxOutline;
-	hitboxOutline.setSize(sf::Vector2f(hitbox.width, hitbox.height));
-	hitboxOutline.setPosition(hitbox.left, hitbox.top);
-	hitboxOutline.setFillColor(sf::Color(150, 50, 250));
-	target.draw(hitboxOutline);
+	//sf::RectangleShape hitboxOutline;
+	//hitboxOutline.setSize(sf::Vector2f(hitbox.width, hitbox.height));
+	//hitboxOutline.setPosition(hitbox.left, hitbox.top);
+	//hitboxOutline.setFillColor(sf::Color(150, 50, 250));
+	//target.draw(hitboxOutline);
 }

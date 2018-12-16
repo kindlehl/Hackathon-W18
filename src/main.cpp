@@ -11,6 +11,7 @@
 #include "../inc/player.h"
 #include "../inc/environment.h"
 #include "../inc/connection.h"
+#include "../inc/rain.h"
 
 using namespace std;
 
@@ -28,16 +29,20 @@ int main (int argc, char** argv) {
 	view.setCenter(window.getSize().x / 2, window.getSize().y / 2);
 	view.rotate(45);
 	view.setSize(view.getSize().x, view.getSize().y*2);
+
 	window.setView(view);
 	window.setFramerateLimit(60);
 
 	ENetPeer* server; 
 	ENetHost* client;
-	
+
 	//Connect to server 
 	if(!establishConnection(&server, &client)){
 		return 1;
 	}
+
+	//creates pattern for uber pwnage
+	Rain matrix_background;
 
 	string map = "maps/test.map";
 
@@ -45,10 +50,9 @@ int main (int argc, char** argv) {
 
 	//create player locally and on the server
 	Player player;
-	Player enemy;
-
-
 	envs.push_back(&player);
+
+	Player enemy;
 	envs.push_back(&enemy);
 	
     while (window.isOpen())
@@ -77,6 +81,8 @@ int main (int argc, char** argv) {
 		player.update();
 		enemy.update();
 
+		matrix_background.update();
+		window.draw(matrix_background);
 		window.draw(background);
 		
 		//sort environmental objects based on their z-index
@@ -116,7 +122,7 @@ bool establishConnection(ENetPeer** server, ENetHost** client){
 
 	//establish connection to the server
 	ENetEvent netevent;
-	if (enet_host_service (*client, &netevent, 5000) > 0 && netevent.type == ENET_EVENT_TYPE_CONNECT) {
+	if (enet_host_service (*client, &netevent, 1000) > 0 && netevent.type == ENET_EVENT_TYPE_CONNECT) {
 		puts ("Connection to some.server.net:1234 succeeded.");
 	}
 	

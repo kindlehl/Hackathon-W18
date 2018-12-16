@@ -89,10 +89,10 @@ void handleEvents(ENetHost* server) {
 		   
 		case ENET_EVENT_TYPE_DISCONNECT:
 			//register players
-			if(event.peer->connect_id == p1->connect_id){
+			if(event.peer->connectID == p1->connectID){
 				printf("Player 1 disconnected\n");
 				p1 = NULL;
-			} else if( event.peer->connect_id == p2->connect_id ) {
+			} else if( event.peer->connectID == p2->connectID ) {
 				printf("Player 2 disconnected\n");
 				p2 = NULL;
 			}
@@ -108,11 +108,11 @@ void send(ENetEvent* e) {
 		return;
 	}	
 
-	if(e->peer->connect_id == p1->connect_id) {
+	if(e->peer->connectID == p1->connectID) {
 		printf("Sending Player 1's data to Player 2\n");
 		enet_peer_send(p2, 0, e->packet);
 		enet_host_flush(server);
-	}else if(e->peer->connect_id == p2->connect_id) {
+	}else if(e->peer->connectID == p2->connectID) {
 		printf("Sending Player 2's data to Player 1\n");
 		enet_peer_send(p1, 0, e->packet);
 		enet_host_flush(server);
