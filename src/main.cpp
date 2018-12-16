@@ -17,6 +17,7 @@
 using namespace std;
 
 vector<Hitbox*> envs;	//Environment objects like walls
+vector<Bullet*> allBullets;
 sf::Vector2i screenSize(800,800);
 
 bool establishConnection(ENetPeer**, ENetHost**);
@@ -80,9 +81,6 @@ int main (int argc, char** argv) {
                 window.close();
 			else if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
 				player.action(event);
-			} else if (event.type == sf::Event::MouseMoved) {
-				sf::Vector2i pixelCoord(event.mouseMove.x, event.mouseMove.y);
-				cout << "x: " << window.mapPixelToCoords(pixelCoord).x << "y: " << window.mapPixelToCoords(pixelCoord).y << std::endl;
 			}
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
 				switch(player.currentState) {
@@ -121,6 +119,10 @@ int main (int argc, char** argv) {
 		player.sendUpdate(server, client);
 		checkServer(enemy, client);
 
+		for(auto& b : allBullets) {
+			b->update();
+		}
+
 		player.update();
 		enemy.update();
 
@@ -136,29 +138,28 @@ int main (int argc, char** argv) {
 			window.draw(*e);
 		}
 
-		
 		// load bullet vectors 
 		if (isFiringRight) {
 			sf::Vector2i velocity(10, 0);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVecRight.push_back(newBullet);
 			isFiringRight = false;
 		}
 		if (isFiringLeft) {
 			sf::Vector2i velocity(-10, 0);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVecLeft.push_back(newBullet);
 			isFiringLeft = false;
 		}
 		if (isFiringUp) {
 			sf::Vector2i velocity(0, -10);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVecUp.push_back(newBullet);
 			isFiringUp = false;
 		}
 		if (isFiringDown) {
 			sf::Vector2i velocity(0, 10);
-			Bullet newBullet(player.hitbox, velocity);
+			Bullet newBullet(player.hitbox, velocity, client, server);
 			bulletVecDown.push_back(newBullet);
 			isFiringDown = false;
 		}
@@ -181,7 +182,13 @@ int main (int argc, char** argv) {
 			bulletVecDown[i].update();
 		}
 
+		for(auto& b : allBullets) {
+			cout << "Bullet at coords x, y: " << b->bullet.getPosition().x << ", " << b->bullet.getPosition().y << endl;
+			window.draw(*b);
+		}
+		
         window.draw(player);
+		window.draw(enemy);
         // Draw the string
         window.display();
     }
@@ -249,16 +256,15 @@ void checkServer(Player& enemy, ENetHost* client) {
 	while (enet_host_service (client, & event, 0) > 0)
 	{
 		if(event.type == ENET_EVENT_TYPE_RECEIVE) {
-			std::cout << "Received update from server" << std::endl;
 	
 			int type;
 			memcpy(&type, event.packet->data, 4);
 			if(type == PLAYER) {
 				std::cout << "Recieved player update from server" << std::endl;
 				enemy.updateFromBuffer((char*)event.packet->data+4);
-				cout << "Enemy hitbox: " << enemy.getHitbox().left <<
-				" " << enemy.getHitbox().top << " " << enemy.getHitbox().width
-				<< " " << enemy.getHitbox().height << endl;
+			}else if (type == BULLET) {
+				cout << "REQUEST TO CREATE BULLET RECEIVED" << endl;
+				allBullets.push_back(new Bullet((char*)event.packet->data+4));
 			}
 
 			enet_packet_destroy (event.packet);
