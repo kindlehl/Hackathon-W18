@@ -51,6 +51,7 @@ public:
 					   //of the cowboy and his scale factor
 	sf::Texture cowboy;
 
+
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
 	sf::IntRect getHitbox() const;
 

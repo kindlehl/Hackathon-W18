@@ -49,14 +49,19 @@ int main (int argc, char** argv) {
 	string map = "maps/test.map";
 
 	//bullet containers and bools
-	vector<Bullet> bulletVecRight;
-	vector<Bullet> bulletVecLeft;
-	vector<Bullet> bulletVecUp;
-	vector<Bullet> bulletVecDown;
-	bool isFiringRight = false;
-	bool isFiringLeft = false;
-	bool isFiringUp = false;
-	bool isFiringDown = false;
+	vector<Bullet> bulletVec;
+	enum direction {
+		None,
+		Up,
+		Right,
+		Down,
+		Left,
+		UpRight,
+		DownRight,
+		UpLeft,
+		DownLeft
+	};
+	direction bulletDir = None;
 
 	auto background = loadMap(map);
 
@@ -77,27 +82,54 @@ int main (int argc, char** argv) {
         while (window.pollEvent(event))
         {
             // Close window: exit
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 window.close();
-			else if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
-				player.action(event);
+			} else if (event.type == sf::Event::MouseMoved) {
+				sf::Vector2i pixelCoord(event.mouseMove.x, event.mouseMove.y);
+				cout << "x: " << window.mapPixelToCoords(pixelCoord).x << "y: " << window.mapPixelToCoords(pixelCoord).y << std::endl;
 			}
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
-				switch(player.currentState) {
-				case WalkingRight: 
-					isFiringRight = true;
-					break;
+				switch (player.currentState) {
 				case Idle:
-					isFiringRight = true;
+					if (player.facingState == WalkingRight) {
+						bulletDir = Right;
+						break;
+					} else if (player.facingState == WalkingLeft) {
+						bulletDir = Left;
+						break;
+					} else if (player.facingState == WalkingUp) {
+						bulletDir = Up;
+						break;
+					} else if (player.facingState == WalkingDown) {
+						bulletDir = Down;
+						break;
+					} else {
+						bulletDir = Right;
+						break;
+					}
+				case WalkingRight: 
+					bulletDir = Right;
 					break;
 				case WalkingLeft:
-					isFiringLeft = true;
+					bulletDir = Left;
 					break;
 				case WalkingUp:
-					isFiringUp = true;
+					bulletDir = Up;
 					break;
 				case WalkingDown:
-					isFiringDown = true;
+					bulletDir = Down;
+					break;
+				case WalkingUpRight:
+					bulletDir = UpRight;
+					break;
+				case WalkingDownRight:
+					bulletDir = DownRight;
+					break;
+				case WalkingDownLeft:
+					bulletDir = DownLeft;
+					break;
+				case WalkingUpLeft:
+					bulletDir = UpLeft;
 					break;
 				}
 			}
@@ -138,48 +170,54 @@ int main (int argc, char** argv) {
 			window.draw(*e);
 		}
 
+
 		// load bullet vectors 
-		if (isFiringRight) {
+		if (bulletDir == Right) {
 			sf::Vector2i velocity(10, 0);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVecRight.push_back(newBullet);
-			isFiringRight = false;
-		}
-		if (isFiringLeft) {
+			Bullet newBullet(player.hitbox, velocity);
+			bulletVec.push_back(newBullet);
+			break;
+		} else if (bulletDir == Left) {
 			sf::Vector2i velocity(-10, 0);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVecLeft.push_back(newBullet);
-			isFiringLeft = false;
-		}
-		if (isFiringUp) {
+			Bullet newBullet(player.hitbox, velocity);
+			bulletVec.push_back(newBullet);
+			break;
+		} else if (bulletDir == Up) {
 			sf::Vector2i velocity(0, -10);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVecUp.push_back(newBullet);
-			isFiringUp = false;
-		}
-		if (isFiringDown) {
+			Bullet newBullet(player.hitbox, velocity);
+			bulletVec.push_back(newBullet);
+			break;
+		} else if (bulletDir == Down) {
 			sf::Vector2i velocity(0, 10);
-			Bullet newBullet(player.hitbox, velocity, client, server);
-			bulletVecDown.push_back(newBullet);
-			isFiringDown = false;
+			Bullet newBullet(player.hitbox, velocity);
+			bulletVec.push_back(newBullet);
+			break;
+		} else if (bulletDir == UpRight) {
+			sf::Vector2i velocity(6, -6);
+			Bullet newBullet(player.hitbox, velocity);
+			bulletVec.push_back(newBullet);
+			break;
+		} else if (bulletDir == DownRight) {
+			sf::Vector2i velocity(6, 6);
+			Bullet newBullet(player.hitbox, velocity);
+			bulletVec.push_back(newBullet);
+			break;
+		} else if (bulletDir == DownLeft) {
+			sf::Vector2i velocity(-6, 6);
+			Bullet newBullet(player.hitbox, velocity);
+			bulletVec.push_back(newBullet);
+			break;
+		} else if (bulletDir == UpLeft) {
+			sf::Vector2i velocity(-6, -6);
+			Bullet newBullet(player.hitbox, velocity);
+			bulletVec.push_back(newBullet);
+			break;
 		}
 
 		//fire bullets from vectors
-		for (int i = 0; i < bulletVecRight.size(); i++) {
-			window.draw(bulletVecRight[i]);
-			bulletVecRight[i].update();
-		}
-		for (int i = 0; i < bulletVecLeft.size(); i++) {
-			window.draw(bulletVecLeft[i]);
-			bulletVecLeft[i].update();
-		}
-		for (int i = 0; i < bulletVecUp.size(); i++) {
-			window.draw(bulletVecUp[i]);
-			bulletVecUp[i].update();
-		}
-		for (int i = 0; i < bulletVecDown.size(); i++) {
-			window.draw(bulletVecDown[i]);
-			bulletVecDown[i].update();
+		for (int i = 0; i < bulletVec.size(); i++) {
+			window.draw(bulletVec[i]);
+			bulletVec[i].update();
 		}
 
 		for(auto& b : allBullets) {
