@@ -11,6 +11,7 @@
 #include "../inc/player.h"
 #include "../inc/environment.h"
 #include "../inc/connection.h"
+#include "../inc/inviswall.h"
 #include "../inc/rain.h"
 
 using namespace std;
@@ -47,6 +48,15 @@ int main (int argc, char** argv) {
 	string map = "maps/test.map";
 
 	auto background = loadMap(map);
+
+	//left wall
+	envs.push_back(new InvisWall(sf::IntRect(-100, 0, 100, screenSize.y)));
+	//right wall
+	envs.push_back(new InvisWall(sf::IntRect(screenSize.x, 0, 100, screenSize.y)));
+	//top wall
+	envs.push_back(new InvisWall(sf::IntRect(0, -100, screenSize.x, 100)));
+	//bottom wall
+	envs.push_back(new InvisWall(sf::IntRect(0, screenSize.y, screenSize.x, 100)));
 
 	//create player locally and on the server
 	Player player;
