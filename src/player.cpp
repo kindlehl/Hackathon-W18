@@ -4,23 +4,147 @@
 Player::Player() {
 	//player defaults to the walkingRight position
 	currentState = previousState = Idle;
+	
+	hitbox.width = 40;
+	hitbox.height = 40;
 
-	hitbox.setPosition(0,200);
+	bool tryagain = false;
+
+	//set unique coordinates
+	do {
+		hitbox.left = rand() % (screenSize.x - hitbox.width);
+		hitbox.top = rand() % (screenSize.y - hitbox.height);
+
+		for(auto& e : envs) {
+			if(hitbox.intersects(e->getHitbox())){
+				tryagain = true;
+				continue;
+			}
+		}
+		
+		tryagain = false;
+
+	} while(tryagain);
+
+
+	//set sprite relative to its hitbox using black magic
+	spritebox.setPosition(hitbox.left + 1.41 * hitbox.width, hitbox.top - 1.41 * hitbox.height - hitbox.height / 2);
 
 	//load cowboy texture from file
 	cowboy.loadFromFile("img/player.png");
 
-	//set hitbox to use cowboy spritesheet
-	hitbox.setTexture(cowboy);
-	hitbox.rotate(45);
+	//set spritebox to use cowboy spritesheet
+	spritebox.setTexture(cowboy);
+	spritebox.rotate(45);
+	//random values that work. second argument needs to be twice the first
+	spritebox.setScale(.5, 1);
 	//set frame to beginning of walking right animation
 	resetFrame(WalkingRight);
 	
 
-	//slap current animation frame onto the hitbox
-	hitbox.setTextureRect(frame);
+	//slap current animation frame onto the spritebox
+	spritebox.setTextureRect(frame);
+}
+sf::IntRect Player::getHitbox() const {
+	return hitbox;
+}
 
-	hitbox.setPosition(0,100);
+////function to update your character to the enemy
+void Player::sendUpdate(ENetPeer* server, ENetHost* client) {
+	//store 2 pointers to buffer
+	char* data;
+	char* base = data = new char[200];
+	int type = PLAYER;
+	shoveData(data, &type, 4);
+
+	//put hitbox into buffer
+	//This function advances the data
+	//pointer each time its called.
+	shoveData(data, &hitbox.left, 4);
+	shoveData(data, &hitbox.top, 4);
+	shoveData(data, &hitbox.width, 4);
+	shoveData(data, &hitbox.height, 4);
+	
+	//put spritebox position into buffer
+	auto coords = spritebox.getPosition();
+	shoveData(data, &coords.x, 4);
+	shoveData(data, &coords.y, 4);
+	
+	//put states into buffer
+	shoveData(data, &currentState, 4);
+	shoveData(data, &previousState, 4);
+	
+	//put animation frame into buffer
+	shoveData(data, &frame.left, 4);
+	shoveData(data, &frame.top, 4);
+	shoveData(data, &frame.width, 4);
+	shoveData(data, &frame.height, 4);
+
+	*data = '\0';
+
+	//create packet
+	ENetPacket* packet = enet_packet_create(base, data - base, ENET_PACKET_FLAG_RELIABLE);
+
+	enet_peer_send(server, 0, packet);
+	enet_host_flush(client);
+}
+
+//buf should have NOTHING but player data, not even the header byte
+void Player::updateFromBuffer(char* buf) {
+	//put hitbox into Datafer
+	//This function advances the Data
+	//pointer each time its called.
+	pullData(buf, &hitbox.left, 4);
+	pullData(buf, &hitbox.top, 4);
+	pullData(buf, &hitbox.width, 4);
+	pullData(buf, &hitbox.height, 4);
+
+	//extract sprite position
+	sf::Vector2f pos;
+	pullData(buf, &pos.x, 4);
+	pullData(buf, &pos.y, 4);
+
+	//set sprite position
+	spritebox.setPosition(pos);
+	
+	//put states into Datafer
+	pullData(buf, &currentState, 4);
+	pullData(buf, &previousState, 4);
+	
+	//reset animation frame
+	pullData(buf, &frame.left, 4);
+	pullData(buf, &frame.top, 4);
+	pullData(buf, &frame.width, 4);
+	pullData(buf, &frame.height, 4);
+
+}
+
+////function to update enemy player's character from server
+//void Player::Receive() {
+	
+//}
+
+void Player::printDebug() {
+	std::cerr << "Player x y w h: " << hitbox.left << " " 
+	<< hitbox.top << " " << hitbox.width << " " << hitbox.height << std::endl;
+
+	switch(currentState) {
+		case Idle:
+			std::cerr << "State: Idle" << std::endl;
+			break;
+		case WalkingDown:
+			std::cerr << "State: WalkingDown" << std::endl;
+			break;
+		case WalkingUp:
+			std::cerr << "State: WalkingUp" << std::endl;
+			break;
+		case WalkingRight:
+			std::cerr << "State: WalkingRight" << std::endl;
+			break;
+		case WalkingLeft:
+			std::cerr << "State: WalkingLeft" << std::endl;
+			break;
+	}
 }
 
 void Player::resetFrame(State playerState) {
@@ -108,10 +232,10 @@ void Player::update() {
 		resetFrame(currentState);
 	}
 
-	this->move();
-
 	//set frame
-	hitbox.setTextureRect(frame);
+	spritebox.setTextureRect(frame);
+
+	this->move();
 
 	//set previousState
 	previousState = currentState;
@@ -123,102 +247,162 @@ void Player::update() {
 //Returns true if collision occured
 //Modifies argument 'offset' to be the largest offest the player could move
 //without intersecting with an environmental object
-template <class T>
-bool Player::collisionWouldHappen(sf::Vector2<T>& offset) {
+bool Player::processMovement(sf::Vector2i& offset) {
 	
-	//player rect
-	sf::Rect<T> player_rect(hitbox.getPosition() + offset, sf::Vector2f(frame.width, frame.height));
 	bool collision = false;
-	sf::Rect<T> collided_rect;
+	sf::IntRect overlap;
+
+	//move hitbox
+	hitbox.left += offset.x;
+	hitbox.top += offset.y;
+	spritebox.move(offset.x, offset.y);
+
 	for(const auto& e : envs) {
 
-		sf::Rect<T> env_rect(e.hitbox.getPosition(), e.hitbox.getSize());
-		if(player_rect.intersects(env_rect)) {
+		sf::IntRect env_rect = e->getHitbox();
+		
+		//skip if reached your own hitbox
+		if(hitbox == env_rect)
+			continue;
+
+		//if a collision occurs with new hitbox position
+		if(hitbox.intersects(env_rect, overlap)) {
 			std::cerr << "Collision detected, avoiding movements" <<  std::endl;
+			//set collision to true
 			collision = true;
-			collided_rect = env_rect;
 			break;
 		}
 
 	}
 
+	//if a collision occured
 	if(collision) {
 		switch(currentState) {
 			case WalkingLeft:
 				{
-					//set offset to move player to right side of environment object
-					int right_wall = collided_rect.left + collided_rect.width;
-					offset.x = right_wall - hitbox.getPosition().x;
+					//move hitbox+sprite by the amount the hitboxes overlap
+					offset.x = overlap.width;
 					break;
 				}
 			case WalkingRight:
 				{
-					//set offset to move player to left side of environment object
-					int left_wall = collided_rect.left;
-					offset.x = left_wall - (hitbox.getPosition().x + frame.width);
+					//move hitbox+sprite by the amount the hitboxes overlap
+					offset.x = -overlap.width;
+					break;
+				}
+			case WalkingUp:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap
+					offset.y = overlap.height;
+					break;
+				}
+			case WalkingDown:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap
+					offset.y = -overlap.height;
+					break;
+				}
+			case WalkingDownRight:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap - 
+					//priorities the dimension that is most overlapped
+					if(overlap.height >= overlap.width)
+						offset.x = -overlap.width;
+					else
+						offset.y = -overlap.height;
+					break;
+				}
+			case WalkingDownLeft:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap - 
+					//priorities the dimension that is most overlapped
+					if(overlap.height >= overlap.width)
+						offset.x = overlap.width;
+					else
+						offset.y = -overlap.height;
+					break;
+				}
+			case WalkingUpRight:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap - 
+					//priorities the dimension that is most overlapped
+					if(overlap.height >= overlap.width)
+						offset.x = -overlap.width;
+					else
+						offset.y = overlap.height;
+					break;
+				}
+			case WalkingUpLeft:
+				{
+					//move hitbox+sprite by the amount the hitboxes overlap - 
+					//priorities the dimension that is most overlapped
+					if(overlap.height >= overlap.width)
+						offset.x = overlap.width;
+					else
+						offset.y = overlap.height;
 					break;
 				}
 
+
 		}
+		hitbox.left += offset.x;
+		hitbox.top += offset.y;
+		spritebox.move(offset.x, offset.y);
 	}
 
 	return collision;
 }
 
 void Player::move() {
-	sf::Vector2f offset(0,0); //no offset initially
+	sf::Vector2i offset(0,0); //offset - determines how far player moves. Modified in procesMovement in case of collision
 	switch (currentState) {
 		case WalkingUp:
 			offset.y = -6;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingRight:
 			offset.x = 6;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingDown:
 			offset.y = 6;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingLeft:
 			offset.x = -6;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingUpRight:
 			offset.x = 3;
 			offset.y = -3;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingDownRight:
 			offset.x = 3;
 			offset.y = 3;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingUpLeft:
 			offset.x = -3;
 			offset.y = -3;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 		case WalkingDownLeft:
 			offset.x = -3;
 			offset.y = 3;
-			collisionWouldHappen(offset);
-			hitbox.move(offset);
 			break;
 
 	}
+
+	processMovement(offset);
+
+	if(currentState != Idle)
+		std::cout << "The topleft corner of cowboy: " << this->spritebox.getPosition().x << ", " << this->spritebox.getPosition().y << std::endl;
 }
 
 
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	target.draw(hitbox, states);
+	target.draw(spritebox, states);
+
+	//sf::RectangleShape hitboxOutline;
+	//hitboxOutline.setSize(sf::Vector2f(hitbox.width, hitbox.height));
+	//hitboxOutline.setPosition(hitbox.left, hitbox.top);
+	//hitboxOutline.setFillColor(sf::Color(150, 50, 250));
+	//target.draw(hitboxOutline);
+
 }
 
 void Player::action(sf::Event e) {

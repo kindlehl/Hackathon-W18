@@ -6,6 +6,10 @@
 #include <string>
 #include <iostream>
 
+#include "../inc/hitbox.h"
+
+extern sf::Vector2i screenSize;
+
 //This file defines the object that
 //represents terrain. These objects can be jumped onto,
 //walked on, or climbed in the case of a ladder
@@ -17,15 +21,17 @@ enum Type {
 	DEADLY	// you touch you die? probably won't implement
 };
 
-class Env : public sf::Drawable {
+class Env : public Hitbox {
 	public:
 		Env() = delete;
 		Env(std::istream& map);
 		~Env() {}; //CAUSES MEMORY LEAK
 		Type type;
-		sf::RectangleShape hitbox;
+		sf::Sprite spritebox;
+		sf::IntRect hitbox;
 		sf::Texture* tex;
-		virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
+		void draw(sf::RenderTarget&, sf::RenderStates) const;
+		sf::IntRect getHitbox() const;
 
 		void update();
 		void move();

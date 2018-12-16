@@ -15,7 +15,6 @@
  * type
 */
 
-
 Env::Env(std::istream& map) {
 	int x, y, w, h;
 	std::string path, t;
@@ -25,14 +24,24 @@ Env::Env(std::istream& map) {
 	map >> x >> y >> w >> h >> path >> t;
 	std::cout << "opening texture at " << path << std::endl;
 
+	hitbox.left = x;
+	hitbox.top = y;
+	hitbox.width = w;
+	hitbox.height = h;
 	//load environment texture from file
-	tex->loadFromFile(path);
+	if(!tex->loadFromFile(path)){
+		std::cerr << "ERROR LOADING TEXTURE" << std::endl;
+	}
 
 	//set hitbox to use cowboy spritesheet
-	hitbox.setTexture(tex);
+	spritebox.setTexture(*tex);
+
+	spritebox.rotate(45);
 	
-	hitbox.setSize(sf::Vector2f(w, h));
-	hitbox.setPosition(sf::Vector2f(x, y));
+	//spritebox.setPosition(hitbox.left + 1.41 * hitbox.width, hitbox.top * .71);
+	spritebox.setPosition(hitbox.left + 1.41 * hitbox.width, hitbox.top - 1.41 * hitbox.height);
+	//spritebox.setScale(.71 * screenSize.x / hitbox.left, 1.41 * screenSize.y / hitbox.top);
+	spritebox.setScale(1.41 * hitbox.width / tex->getSize().x, 2 * 1.41 * hitbox.height / tex->getSize().y);
 
 	if(t == "CLIMB") {
 		type = CLIMB;
@@ -49,10 +58,21 @@ Env::Env(std::istream& map) {
 
 }
 
+sf::IntRect Env::getHitbox() const {
+	return hitbox;
+}
+
 bool Env::good() {
 	return valid;
 }
 
 void Env::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	target.draw(hitbox, states);
+	target.draw(spritebox, states);
+
+	
+	//sf::RectangleShape hitboxOutline;
+	//hitboxOutline.setSize(sf::Vector2f(hitbox.width, hitbox.height));
+	//hitboxOutline.setPosition(hitbox.left, hitbox.top);
+	//hitboxOutline.setFillColor(sf::Color(150, 50, 250));
+	//target.draw(hitboxOutline);
 }
