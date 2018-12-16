@@ -12,7 +12,7 @@ ENetPeer *p1 = NULL, *p2 = NULL;
 ENetHost* server;
 
 void handleEvents(ENetHost* server);
-void send(ENetEvent);
+void send(ENetEvent*);
 
 int main(int argc, char** argv) {
 
@@ -83,9 +83,7 @@ void handleEvents(ENetHost* server) {
 					event.peer -> data,
 					event.channelID);
 			//send packet to the other player that did not send it.
-			send(event);
-			/* Clean up the packet now that we're done using it. */
-			enet_packet_destroy (event.packet);
+			send(&event);
 			
 			break;
 		   
@@ -102,7 +100,7 @@ void handleEvents(ENetHost* server) {
 	}
 }
 
-void send(ENetEvent e) {
+void send(ENetEvent* e) {
 	if(p2 && p2) {
 		printf("Transmitting packet\n");
 	}else {
@@ -110,14 +108,13 @@ void send(ENetEvent e) {
 		return;
 	}	
 
-	if(e.peer->data == p1->data) {
+	if(e->peer->data == p1->data) {
 		printf("Sending Player 1's data to Player 2\n");
-		enet_peer_send(p2, 0, e.packet);
+		enet_peer_send(p2, 0, e->packet);
 		enet_host_flush(server);
-	}else if(e.peer->data == p2->data) {
+	}else if(e->peer->data == p2->data) {
 		printf("Sending Player 2's data to Player 1\n");
-		enet_peer_send(p1, 0, e.packet);
+		enet_peer_send(p1, 0, e->packet);
 		enet_host_flush(server);
 	}
-
 }
