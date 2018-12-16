@@ -1,6 +1,5 @@
 #include <iostream>
 #include <enet/enet.h>
-#include <pair>
+#include <utility>
 #include <vector>
 
-struct Connection:

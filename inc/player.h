@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <cstring>
 
 #include "../inc/environment.h"
 #include "../inc/hitbox.h"
@@ -32,10 +33,12 @@ enum State {
 class Player : public Hitbox {
 public:
 	Player();
+	Player(char*);
 	~Player() {};
 	
 	State currentState, previousState;
 
+	void printDebug();
 
 	sf::IntRect hitbox;
 	sf::Sprite spritebox;

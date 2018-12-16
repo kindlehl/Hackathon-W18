@@ -29,8 +29,55 @@ Player::Player() {
 	spritebox.setTextureRect(frame);
 }
 
+Player::Player(char* payload) {
+
+	memcpy(&ObjID, payload, 1); //set object ID from payload
+
+	//set hitbox from payload
+	memcpy(&hitbox.left, payload + 1, 2);
+	memcpy(&hitbox.top, payload + 3, 2);
+	memcpy(&hitbox.width, payload + 5, 2);
+	memcpy(&hitbox.height, payload + 7, 2);
+
+	//set player's state
+	memcpy(&currentState, payload + 9, 4);
+}
+
 sf::IntRect Player::getHitbox() const {
 	return hitbox;
+}
+
+////function to update your character to the enemy/server
+//void Player::Transmit() {
+	
+//}
+
+////function to update enemy player's character from server
+//void Player::Receive() {
+	
+//}
+
+void Player::printDebug() {
+	std::cerr << "Player x y w h: " << hitbox.left << " " 
+	<< hitbox.top << " " << hitbox.width << " " << hitbox.height << std::endl;
+
+	switch(currentState) {
+		case Idle:
+			std::cerr << "State: Idle" << std::endl;
+			break;
+		case WalkingDown:
+			std::cerr << "State: WalkingDown" << std::endl;
+			break;
+		case WalkingUp:
+			std::cerr << "State: WalkingUp" << std::endl;
+			break;
+		case WalkingRight:
+			std::cerr << "State: WalkingRight" << std::endl;
+			break;
+		case WalkingLeft:
+			std::cerr << "State: WalkingLeft" << std::endl;
+			break;
+	}
 }
 
 void Player::resetFrame(State playerState) {

@@ -1,5 +1,7 @@
 #include "../inc/hitbox.h"
 
+int Hitbox::numObjects = 0;
+
 bool hitboxCompare::operator() (const Hitbox* l, const Hitbox* r) const {
 	return l->value() > r->value();
 }

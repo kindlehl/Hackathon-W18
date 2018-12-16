@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
+#include <enet/enet.h>
+
 #include <fstream>
 #include <vector>
 #include <algorithm>
@@ -13,6 +15,8 @@ using namespace std;
 vector<Hitbox*> envs;	//Environment objects like walls
 sf::Vector2i screenSize(800,800);
 
+bool establishConnection();
+
 int main (int argc, char** argv) {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "Hackathon");
@@ -23,7 +27,13 @@ int main (int argc, char** argv) {
 	window.setView(view);
 	window.setFramerateLimit(60);
 
+	//Connect to server 
+	if(!establishConnection()){
+		return 1;
+	}
+
 	Player player;
+
 
 	int num_tiles;
 	string background_path;
@@ -88,4 +98,37 @@ int main (int argc, char** argv) {
         window.display();
     }
     return EXIT_SUCCESS;
+}
+bool establishConnection() {
+
+	if (enet_initialize () != 0) {
+        fprintf (stderr, "An error occurred while initializing ENet.\n");
+        return false;
+    }
+    atexit (enet_deinitialize);
+
+	//set up address to local server
+	ENetAddress address;
+	enet_address_set_host(&address, "localhost");
+	address.port = 9000;
+
+	//create client to send data
+	ENetHost* client = enet_host_create(NULL, 1, 2, 0,0);
+	//create peer to send data to server
+	ENetPeer* server = enet_host_connect(client, &address, 2, 0);
+
+	if(server == NULL){
+		cerr << "Error connecting to server" << endl;
+	}
+
+	//establish connection to the server
+	ENetEvent netevent;
+	if (enet_host_service (client, &netevent, 5000) > 0 && netevent.type == ENET_EVENT_TYPE_CONNECT) {
+		puts ("Connection to some.server.net:1234 succeeded.");
+	}
+
+	//send packet to create session
+	
+
+
 }
