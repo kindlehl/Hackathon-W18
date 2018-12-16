@@ -71,11 +71,17 @@ void handleEvents(ENetHost* server) {
 			/* Store any relevant client information here. */
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
-			printf ("A packet of length %u containing %s was received from %s on channel %u.\n",
+			printf ("A packet of length %u containing %c was received from %s on channel %u.\n",
 					event.packet -> dataLength,
 					event.packet -> data,
 					event.peer -> data,
 					event.channelID);
+			{
+				int c = 0;
+				while(c < event.packet->dataLength) {
+					printf("%x", (unsigned char) event.packet->data[c]);
+				}
+			}
 			/* Clean up the packet now that we're done using it. */
 			enet_packet_destroy (event.packet);
 			

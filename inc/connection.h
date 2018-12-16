@@ -34,7 +34,7 @@ public:
 	ENetHost* client;
 	ENetPeer* server;
 	void sendNewPlayer(Player);
-	void sendNewSession(Player);
+	void handleClient();
 	void sendNewSession(int sID, std::string map);
 	void update();
 	bool active();
