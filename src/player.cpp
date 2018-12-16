@@ -512,19 +512,6 @@ void Player::action(sf::Event e) {
 
 	if(e.type == sf::Event::KeyPressed) { 
 		switch (e.key.code) {
-			case sf::Keyboard::Space:
-				if (currentState == Idle) {
-					if (facingState == WalkingUp) {
-						currentState = ShootingUp;
-					} else if (facingState == WalkingRight) {
-						currentState = ShootingRight;
-					} else if (facingState == WalkingDown) {
-						currentState = ShootingDown;
-					} else if (facingState == WalkingLeft) {
-						currentState = ShootingLeft;
-					}
-				}
-				break;
 			case sf::Keyboard::W:
 				//set state
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
@@ -615,6 +602,35 @@ void Player::action(sf::Event e) {
 					currentState = ShootingRight;
 				} else {
 					currentState = WalkingRight;
+				}
+				break;
+			case sf::Keyboard::Space:
+				if (currentState == Idle) {
+					if (facingState == WalkingUp) {
+						currentState = ShootingUp;
+					} else if (facingState == WalkingRight) {
+						currentState = ShootingRight;
+					} else if (facingState == WalkingDown) {
+						currentState = ShootingDown;
+					} else if (facingState == WalkingLeft) {
+						currentState = ShootingLeft;
+					}
+				} else if (currentState == WalkingUp) {
+					currentState = ShootingUp;
+				} else if (currentState == WalkingRight) {
+					currentState = ShootingRight;
+				} else if (currentState == WalkingDown) {
+					currentState = ShootingDown;
+				} else if (currentState == WalkingLeft) {
+					currentState = ShootingLeft;
+				} else if (currentState == WalkingUpRight) {
+					currentState = ShootingUpRight;
+				} else if (currentState == WalkingDownRight) {
+					currentState = ShootingDownRight;
+				} else if (currentState == WalkingDownLeft) {
+					currentState = ShootingDownLeft;
+				} else if (currentState == WalkingUpLeft) {
+					currentState = ShootingUpLeft;
 				}
 				break;
 		}
