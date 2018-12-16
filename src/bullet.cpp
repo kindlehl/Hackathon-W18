@@ -1,7 +1,7 @@
 #include "../inc/bullet.h"
 
 // ctor takes in the 
-Bullet::Bullet(sf::IntRect, sf::Vector2i, ENetHost* client, ENetPeer* server) {
+Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity, ENetHost* client, ENetPeer* server) {
 	hitbox.left = rectIn.left + rectIn.width/2;
 	hitbox.top = rectIn.top - rectIn.height/2;
 	hitbox.width = rectIn.width/4;
@@ -17,13 +17,24 @@ Bullet::Bullet(sf::IntRect, sf::Vector2i, ENetHost* client, ENetPeer* server) {
 }
 
 Bullet::Bullet(char* packet) {
+	int bulletx, bullety;
 	pullData(packet, &bulletx, 4);
 	pullData(packet, &bullety, 4);
+
 	pullData(packet, &xVel, 4);
 	pullData(packet, &yVel, 4);
+
+	pullData(packet, &hitbox.left, 4);
+	pullData(packet, &hitbox.top, 4);
+	pullData(packet, &hitbox.width, 4);
+	pullData(packet, &hitbox.height, 4);
+
+	bullet.setPosition(sf::Vector2f(hitbox.left, hitbox.top));
+	bullet.setSize(sf::Vector2f(hitbox.width, hitbox.height));
+	bullet.setFillColor(sf::Color::Red);
 }
 
-Bullet::sendCreateSignal(ENetHost* client, ENetPeer* server) {
+void Bullet::sendCreateSignal(ENetHost* client, ENetPeer* server) {
 	char* data;
 	char* base = data = new char[200];
 
@@ -39,6 +50,12 @@ Bullet::sendCreateSignal(ENetHost* client, ENetPeer* server) {
 	shoveData(data, &bullety, 4);
 	shoveData(data, &xVel, 4);
 	shoveData(data, &yVel, 4);
+
+	//send hitbox
+	shoveData(data, &hitbox.left, 4);
+	shoveData(data, &hitbox.top, 4);
+	shoveData(data, &hitbox.width, 4);
+	shoveData(data, &hitbox.height, 4);
 	*data = '\0';
 
 	//create packet

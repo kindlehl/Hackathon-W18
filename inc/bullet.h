@@ -14,13 +14,11 @@ public:
 	Bullet(int, int, int, int);
 	sf::IntRect hitbox;
 	void update();
-	void sendCreateSignal();
+	void sendCreateSignal(ENetHost*, ENetPeer*); //send over network
 	sf::IntRect getHitbox() const;
 	void draw(sf::RenderTarget & target, sf::RenderStates states) const;
 	//virtual void draw(sf::RenderWindow &window);
 
-protected:
-private:
 	sf::RectangleShape bullet;
 	int xVel;
 	int yVel;
