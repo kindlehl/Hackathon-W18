@@ -1,7 +1,7 @@
 #include "../inc/bullet.h"
 
 // ctor takes in the 
-Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity, ENetHost* client, ENetPeer* server) {
+Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity) {
 	hitbox.left = rectIn.left + rectIn.width/2;
 	hitbox.top = rectIn.top - rectIn.height/2;
 	hitbox.width = rectIn.width/4;
