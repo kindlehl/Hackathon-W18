@@ -10,7 +10,7 @@ Player::Player() {
 
 	bool tryagain = false;
 
-	//set unique coordinates
+	//set unique coordinates for hitbox
 	do {
 		hitbox.left = rand() % (screenSize.x - hitbox.width);
 		hitbox.top = rand() % (screenSize.y - hitbox.height);
@@ -26,6 +26,7 @@ Player::Player() {
 
 	} while(tryagain);
 
+	startingHitbox = hitbox;
 
 	//set sprite relative to its hitbox using black magic
 	spritebox.setPosition(hitbox.left + 1.61 * hitbox.width, hitbox.top - 1.41 * hitbox.height - hitbox.height / 2);
@@ -45,6 +46,7 @@ Player::Player() {
 	//slap current animation frame onto the spritebox
 	spritebox.setTextureRect(frame);
 }
+
 sf::IntRect Player::getHitbox() const {
 	return hitbox;
 }
@@ -217,19 +219,55 @@ void Player::resetFrame(State playerState) {
 }
 
 void Player::update() {
+	//If the player is rewinding, then by golly rewind!
+	
+	if(rewinding) {
+
+		if(freeze_frames.size() == 0) {
+			std::cout << "Sorry, no freeze frames for you!" << std::endl;
+			rewinding = false;
+		} else{
+			std::cout << "REWINDING IN ACTION" << std::endl;
+			FreezeFrame data = *(freeze_frames.end()-1);
+			freeze_frames.pop_back();
+			spritebox = data.spritebox;
+			hitbox = data.hitbox;
+			frame = data.frame;
+		}
+		return;
+	}
+
+
 	//if the player changes directions or jumps
 	if(previousState == currentState && framecount >= 10 && currentState != Idle) {
-		//frame.left = (frame.left + 128) % (128 * 11);
+
 		frame.left += 128;
 
 		if(frame.left > 1280) {
 			resetFrame(currentState);
+			//store player state for rewind
 		}
 
 		framecount = 0;
 	} else if (previousState != currentState && currentState != Idle) {
 		//reset animation in spritesheet
 		resetFrame(currentState);
+	} 
+	if (framecount == 0) {
+
+		//if storing max allowed frames
+		if (freeze_frames.size() > MAX_FRAMES_SAVED){
+			//erase oldest freeze frame
+			freeze_frames.erase(freeze_frames.begin(), freeze_frames.begin() + 1);
+		} 
+		//store new frame
+		FreezeFrame newFrame;
+		newFrame.hitbox = hitbox;
+		newFrame.spritebox = spritebox;
+		newFrame.frame = frame;
+
+		freeze_frames.push_back(newFrame);
+		
 	}
 
 	//set frame

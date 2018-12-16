@@ -13,6 +13,9 @@ environment.o: src/environment.cpp inc/environment.h hitbox.o
 rain.o: src/rain.cpp inc/rain.h
 	$(CC) $(CFLAGS) src/rain.cpp -c $(CLINK)
 
+#bullet.o: src/bullet.cpp inc/bullet.h
+	#$(CC) $(CFLAGS) src/bullet.cpp -c $(CLINK)
+
 player.o: src/player.cpp inc/player.h hitbox.o
 	$(CC) $(CFLAGS) src/player.cpp -c $(CLINK)
 
@@ -24,3 +27,6 @@ server: src/server.cpp
 
 connection.o: src/connection.cpp inc/connection.h
 	$(CC) $(CFLAGS) src/connection.cpp -c $(CLINK)
+
+clean:
+	rm -rf *.o
