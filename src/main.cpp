@@ -259,6 +259,9 @@ void checkServer(Player& enemy, ENetHost* client) {
 				cout << "Enemy hitbox: " << enemy.getHitbox().left <<
 				" " << enemy.getHitbox().top << " " << enemy.getHitbox().width
 				<< " " << enemy.getHitbox().height << endl;
+			}else if (type == BULLET) {
+				//		ADD CODE TO CREATE BULLET AND PUT IT SOMEWHERE
+		//		envs.push_back(new Bullet(char*)event.packet->data+4);
 			}
 
 			enet_packet_destroy (event.packet);
