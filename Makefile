@@ -16,8 +16,8 @@ player.o: src/player.cpp inc/player.h hitbox.o
 hitbox.o: src/hitbox.cpp inc/hitbox.h
 	$(CC) $(CFLAGS) src/hitbox.cpp -c $(CLINK)
 
-server: src/server.cpp inc/server.h connection.o player.o
-	$(CC) $(CFLAGS) hitbox.o connection.o player.o src/server.cpp -o server $(CLINK)
+server: src/server.cpp 
+	$(CC) $(CFLAGS) src/server.cpp -o server $(CLINK)
 
 connection.o: src/connection.cpp inc/connection.h
 	$(CC) $(CFLAGS) src/connection.cpp -c $(CLINK)
