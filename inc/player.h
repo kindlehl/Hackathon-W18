@@ -48,7 +48,7 @@ public:
 	Player(char*);
 	~Player() {};
 	
-	State currentState, previousState;
+	State currentState, previousState, facingState;
 
 	void printDebug();
 
@@ -59,6 +59,7 @@ public:
 	sf::IntRect frame; //rectangle that determines the frame
 					   //of the cowboy and his scale factor
 	sf::Texture cowboy;
+
 
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
 	sf::IntRect getHitbox() const;

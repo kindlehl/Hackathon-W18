@@ -153,12 +153,12 @@ void Player::resetFrame(State playerState) {
 	switch(playerState) {
 		case WalkingUp:
 			frame = {
-			frame.left = 0,
-			frame.top = 6 * 128,
-			frame.width = 128,
-			frame.height = 128
-		};
-		break;
+				frame.left = 0,
+				frame.top = 6 * 128,
+				frame.width = 128,
+				frame.height = 128
+			};
+			break;
 		case WalkingRight:
 			frame = {
 				frame.left = 0,
@@ -210,6 +210,70 @@ void Player::resetFrame(State playerState) {
 		case WalkingDownLeft:
 			frame = {
 				frame.left = 0,
+				frame.top = 9 * 128,
+				frame.width = 128,
+				frame.height = 128
+			};
+			break;
+		case ShootingUp:
+			frame = {
+				frame.left = 11 * 128,
+				frame.top = 6 * 128,
+				frame.width = 128,
+				frame.height = 128
+			};
+			break;
+		case ShootingRight:
+			frame = {
+				frame.left = 11 * 128,
+				frame.top = 4 * 128,
+				frame.width = 128,
+				frame.height = 128
+			};
+			break;
+		case ShootingDown:
+			frame = {
+				frame.left = 11 * 128,
+				frame.top = 2 * 128,
+				frame.width = 128,
+				frame.height = 128
+			};
+			break;
+		case ShootingLeft:
+			frame = {
+				frame.left = 11 * 128,
+				frame.top = 8 * 128,
+				frame.width = 128,
+				frame.height = 128
+			};
+			break;
+		case ShootingUpRight:
+			frame = {
+				frame.left = 11 * 128,
+				frame.top = 5 * 128,
+				frame.width = 128,
+				frame.height = 128
+			};
+			break;
+		case ShootingDownRight:
+			frame = {
+				frame.left = 11 * 128,
+				frame.top = 3 * 128,
+				frame.width = 128,
+				frame.height = 128
+			};
+			break;
+		case ShootingUpLeft:
+			frame = {
+				frame.left = 11 * 128,
+				frame.top = 7 * 128,
+				frame.width = 128,
+				frame.height = 128
+			};
+			break;
+		case ShootingDownLeft:
+			frame = {
+				frame.left = 11 * 128,
 				frame.top = 9 * 128,
 				frame.width = 128,
 				frame.height = 128
@@ -422,7 +486,8 @@ void Player::move() {
 			offset.x = -3;
 			offset.y = 3;
 			break;
-
+		default:
+			break;
 	}
 
 	processMovement(offset);
@@ -444,58 +509,124 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 }
 
 void Player::action(sf::Event e) {
+
 	if(e.type == sf::Event::KeyPressed) { 
 		switch (e.key.code) {
+			case sf::Keyboard::Space:
+				if (currentState == Idle) {
+					if (facingState == WalkingUp) {
+						currentState = ShootingUp;
+					} else if (facingState == WalkingRight) {
+						currentState = ShootingRight;
+					} else if (facingState == WalkingDown) {
+						currentState = ShootingDown;
+					} else if (facingState == WalkingLeft) {
+						currentState = ShootingLeft;
+					}
+				}
+				break;
 			case sf::Keyboard::W:
 				//set state
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-					currentState = WalkingUpLeft;
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+						currentState = ShootingUpLeft;
+					} else {
+						currentState = WalkingUpLeft;
+					}
 					break;
 				} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-					currentState = WalkingUpRight;
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+						currentState = ShootingUpRight;
+					} else {
+						currentState = WalkingUpRight;
+					}
 					break;
 				}
-				currentState = WalkingUp;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+					currentState = ShootingUp;
+				} else {
+					currentState = WalkingUp;
+				}
 				break;
 			case sf::Keyboard::A:
 				//set state
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-					currentState = WalkingUpLeft;
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+						currentState = ShootingUpLeft;
+					} else {
+						currentState = WalkingUpLeft;
+					}
 					break;
 				} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-					currentState = WalkingDownLeft;
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+						currentState = ShootingDownLeft;
+					} else {
+						currentState = WalkingDownLeft;
+					}
 					break;
 				}
-				currentState = WalkingLeft;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+					currentState = ShootingLeft;
+				} else {
+					currentState = WalkingLeft;
+				}
 				break;
 			case sf::Keyboard::S:
 				//set state
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-					currentState = WalkingDownLeft;
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+						currentState = ShootingDownLeft;
+					} else {
+						currentState = WalkingDownLeft;
+					}
 					break;
 				} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-					currentState = WalkingDownRight;
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+						currentState = ShootingDownRight;
+					} else {
+						currentState = WalkingDownRight;
+					}
 					break;
 				}
-				currentState = WalkingDown;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+					currentState = ShootingDown;
+				} else {
+					currentState = WalkingDown;
+				}
 				break;
 			case sf::Keyboard::D:
 				//set state
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-					currentState = WalkingUpRight;
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+						currentState = ShootingUpRight;
+					} else {
+						currentState = WalkingUpRight;
+					}
 					break;
 				} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-					currentState = WalkingDownRight;
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+						currentState = ShootingDownRight;
+					} else {
+						currentState = WalkingDownRight;
+					}
 					break;
 				}
-				currentState = WalkingRight;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+					currentState = ShootingRight;
+				} else {
+					currentState = WalkingRight;
+				}
 				break;
 		}
 	} else if (e.type == sf::Event::KeyReleased) {
 		switch (e.key.code) {
 			case sf::Keyboard::W:
 				//if key released is the key that represents the cowboys directions
-				if (currentState == WalkingUpRight) {
+				if (currentState == ShootingUpRight) {
+					currentState = ShootingRight;
+				} else if (currentState == ShootingUpLeft) {
+					currentState = ShootingLeft;
+				} else if (currentState == WalkingUpRight) {
 					//set animation to frame 1, set state to direction of first key held down
 					resetFrame(WalkingUpRight);
 					previousState = currentState;
@@ -509,12 +640,17 @@ void Player::action(sf::Event e) {
 					//set animation to frame 1, set state to idle
 					resetFrame(WalkingUp);
 					previousState = currentState;
+					facingState = previousState;
 					currentState = Idle;
 				}
 			break;
 			case sf::Keyboard::A:
 				//if key released is the key that represents the cowboys directions
-				if (currentState == WalkingUpLeft) {
+				if (currentState == ShootingUpLeft) {
+					currentState = ShootingUp;
+				} else if (currentState == ShootingDownLeft) {
+					currentState = ShootingDown;
+				} else if (currentState == WalkingUpLeft) {
 					//set animation to frame 1, set state to direction of first key held down
 					resetFrame(WalkingUpLeft);
 					previousState = currentState;
@@ -528,12 +664,17 @@ void Player::action(sf::Event e) {
 					//set animation to frame 1, set state to idle
 					resetFrame(WalkingLeft);
 					previousState = currentState;
+					facingState = previousState;
 					currentState = Idle;
 				}
 				break;
 			case sf::Keyboard::S:
 				//if key released is the key that represents the cowboys directions
-				if (currentState == WalkingDownRight) {
+				if (currentState == ShootingDownRight) {
+					currentState = ShootingRight;
+				} else if (currentState == ShootingDownLeft) {
+					currentState = ShootingLeft;
+				} else if (currentState == WalkingDownRight) {
 					//set animation to frame 1, set state to direction of first key held down
 					resetFrame(WalkingDownRight);
 					previousState = currentState;
@@ -547,12 +688,17 @@ void Player::action(sf::Event e) {
 					//set animation to frame 1, set state to idle
 					resetFrame(WalkingDown);
 					previousState = currentState;
+					facingState = previousState;
 					currentState = Idle;
 				}
 				break;
 			case sf::Keyboard::D:
 				//if key released is the key that represents the cowboys directions
-				if (currentState == WalkingUpRight) {
+				if (currentState == ShootingUpRight) {
+					currentState = ShootingUp;
+				} else if (currentState == ShootingDownRight) {
+					currentState = ShootingDown;
+				} else if (currentState == WalkingUpRight) {
 					//set animation to frame 1, set state to direction of first key held down
 					resetFrame(WalkingUpRight);
 					previousState = currentState;
@@ -566,7 +712,56 @@ void Player::action(sf::Event e) {
 					//set animation to frame 1, set state to idle
 					resetFrame(WalkingRight);
 					previousState = currentState;
+					facingState = previousState;
 					currentState = Idle;
+				}
+				break;
+			case sf::Keyboard::Space:
+				//space released, indicates shooting
+				if (currentState == ShootingUpRight) {
+					resetFrame(WalkingUpRight);
+					currentState = WalkingUpRight;
+				} else if (currentState == ShootingDownRight) {
+					resetFrame(WalkingDownRight);
+					currentState = WalkingDownRight;
+				} else if (currentState == ShootingDownLeft) {
+					resetFrame(WalkingDownLeft);
+					currentState = WalkingDownLeft;
+				} else if (currentState == ShootingUpLeft) {
+					resetFrame(ShootingUpLeft);
+					currentState = WalkingUpLeft;
+				} else if (currentState == ShootingUp) {
+					resetFrame(WalkingUp);
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+						currentState = WalkingUp;
+					} else {
+						facingState = WalkingUp;
+						currentState = Idle;
+					}
+				} else if (currentState == ShootingRight) {
+					resetFrame(WalkingRight);
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+						currentState = WalkingRight;
+					} else {
+						facingState = WalkingRight;
+						currentState = Idle;
+					}
+				} else if (currentState == ShootingDown) {
+					resetFrame(WalkingDown);
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+						currentState = WalkingDown;
+					} else {
+						facingState = WalkingDown;
+						currentState = Idle;
+					}
+				} else if (currentState == ShootingLeft) {
+					resetFrame(WalkingLeft);
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+						currentState = WalkingLeft;
+					} else {
+						facingState = WalkingLeft;
+						currentState = Idle;
+					}
 				}
 				break;
 		}
