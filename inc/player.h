@@ -1,6 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#define MAX_FRAMES_SAVED 20
+
 #include <SFML/Graphics.hpp>
 #include <enet/enet.h>
 #include <vector>
@@ -35,6 +37,11 @@ enum State {
 	ShootingDownLeft
 };
 
+struct FreezeFrame {
+	sf::Sprite spritebox;
+	sf::IntRect hitbox, frame;
+};
+
 class Player : public Hitbox {
 public:
 	Player();
@@ -45,7 +52,9 @@ public:
 
 	void printDebug();
 
-	sf::IntRect hitbox;
+	sf::IntRect hitbox, startingHitbox;
+	std::vector<FreezeFrame> freeze_frames;
+
 	sf::Sprite spritebox;
 	sf::IntRect frame; //rectangle that determines the frame
 					   //of the cowboy and his scale factor
@@ -53,6 +62,8 @@ public:
 
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
 	sf::IntRect getHitbox() const;
+
+	bool rewinding = false;
 
 	void action(sf::Event);
 	void update();
