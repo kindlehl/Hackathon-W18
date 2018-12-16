@@ -20,10 +20,12 @@ enum create_type {
 	BULLET
 };
 
-struct Packet {
+class Packet {
+public:
+	Packet(unsigned char*);
 	int sessionID;
 	p_type type;
-	char* payload;
+	unsigned char* payload;
 };
 
 class Connection {
@@ -35,10 +37,11 @@ public:
 	ENetPeer* server;
 	void sendNewPlayer(Player);
 	void handleClient();
-	void sendNewSession(int sID, std::string map);
+	void handlePacket(Packet);
 	void update();
 	bool active();
 	int sessionID;
+	bool connected = false;
 };
 
 #endif

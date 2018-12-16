@@ -1,5 +1,12 @@
 #include "../inc/connection.h"
 
+//data is a string
+Packet::Packet(unsigned char* data) {
+	memcpy(&sessionID, data, 4);
+	memcpy(&type, data + 4, 4);
+	memcpy(payload, data + 8, strlen((const char*)data) - 8 + 1);
+}
+
 //create new connection upon NEW packet type receipt
 Connection::Connection(Packet p) : 
 sessionID(p.sessionID)
@@ -14,16 +21,28 @@ client(c)
 {
 	switch(t) {
 		case NEW:
-			//sendNewSession(sessionID, map);
-			sendNewSession(1, map);
 			sendNewPlayer(p);
+	}
+}
+
+void Connection::handlePacket(Packet p) {
+	switch(p.type) {
+		case CREATE:
+			create_type t;
+			memcpy(&t, p.payload, 4);
+			switch(t) {
+				case PLAYER:
+					//send out object ID
+				break;
+			}
+
 	}
 }
 
 void Connection::handleClient() {
 	ENetEvent event;
-	/* Wait up to 1000 milliseconds for an event. */
-	while (enet_host_service (client, & event, 1000) > 0)
+	//check event queue, process packets if they come in
+	while (enet_host_service (client, & event, 0) > 0)
 	{
 		switch (event.type)
 		{
@@ -31,6 +50,7 @@ void Connection::handleClient() {
 			printf ("A new client connected from %x:%u.\n", 
 					event.peer -> address.host,
 					event.peer -> address.port);
+					
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
 			printf ("A packet of length %u containing %s was received from %s on channel %u.\n",
@@ -38,6 +58,8 @@ void Connection::handleClient() {
 					event.packet -> data,
 					event.peer -> data,
 					event.channelID);
+
+			handlePacket(Packet(event.packet->data));
 			/* Clean up the packet now that we're done using it. */
 			enet_packet_destroy (event.packet);
 			
@@ -58,6 +80,7 @@ void Connection::sendNewPlayer(Player p) {
 	int create = CREATE;
 	int player = PLAYER;
 
+	//create packet with CREATE and create type of PLAYER
 	memcpy(packet, &sessionID, 4);
 	memcpy(packet + 4, &create, 4);
 	memcpy(packet + 8, &player, 4);
@@ -95,30 +118,6 @@ void Connection::sendNewPlayer(Player p) {
 
 }
 
-void Connection::sendNewSession(int sID, std::string map) {
-	char* packet = new char[200];
-
-	int val = NEW;
-
-	memcpy(packet, &sID, 4);
-	memcpy(packet + 4, &val, 4);
-	memcpy(packet + 8, map.c_str(), map.length() + 1);
-
-	ENetPacket* e_packet = enet_packet_create(packet,
-											  strlen(packet) + 1,
-											  ENET_PACKET_FLAG_RELIABLE);
-	if(!e_packet) {
-		std::cerr << "Error creating packet" << std::endl;	
-	}
-
-	if(enet_peer_send(server, 0, e_packet) < 0){
-		std::cerr << "Error sending packet!" << std::endl;
-	}
-	
-	delete [] packet;
-	enet_host_flush (client);
-
-}
 
 Connection::~Connection() {}
 
