@@ -44,7 +44,7 @@ struct FreezeFrame {
 
 class Player : public Hitbox {
 public:
-	Player();
+	Player(int);
 	Player(char*);
 	~Player() {};
 	
@@ -60,7 +60,7 @@ public:
 					   //of the cowboy and his scale factor
 	sf::Texture cowboy;
 
-
+	int type;
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
 	sf::IntRect getHitbox() const;
 

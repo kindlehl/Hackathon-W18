@@ -65,10 +65,10 @@ int main (int argc, char** argv) {
 	envs.push_back(new InvisWall(sf::IntRect(0, screenSize.y, screenSize.x, 100)));	//bottom wall
 
 	//create player locally and on the server
-	Player player;
+	Player player(FRIENDLY_PLAYER_TYPE);
 	envs.push_back(&player);
 
-	Player enemy;
+	Player enemy(ENEMY_PLAYER_TYPE);
 	envs.push_back(&enemy);
 	
     while (window.isOpen())
@@ -157,10 +157,12 @@ int main (int argc, char** argv) {
 			iter->update();
 			Hitbox* hitEnv = iter->checkCollision(envs);
 			if(hitEnv != NULL){
-				if(hitEnv->type == PLAYER_TYPE){
+				if(hitEnv->type == ENEMY_PLAYER_TYPE){
 					player.rewinding = true;
 				}
-				bulletVec.erase(iter);
+				if(hitEnv->type != FRIENDLY_PLAYER_TYPE){
+					bulletVec.erase(iter);
+				}
 			}
 		}
 

@@ -1,10 +1,10 @@
 #include "../inc/player.h"
 #include <iostream>
 
-Player::Player() {
+Player::Player(int t) {
 	//player defaults to the walkingRight position
 	currentState = previousState = Idle;
-	type = PLAYER_TYPE;
+	type = t;
 	
 	hitbox.width = 40;
 	hitbox.height = 40;
