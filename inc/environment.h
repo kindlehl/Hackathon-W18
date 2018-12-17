@@ -26,7 +26,7 @@ class Env : public Hitbox {
 		Env() = delete;
 		Env(std::istream& map);
 		~Env() {}; //CAUSES MEMORY LEAK
-		Type type;
+		Type typ;
 		sf::Sprite spritebox;
 		sf::IntRect hitbox;
 		sf::Texture* tex;

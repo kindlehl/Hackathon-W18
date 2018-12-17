@@ -39,6 +39,14 @@ Bullet::Bullet(char* packet) {
 	bullet.setPosition(sf::Vector2f(hitbox.left, hitbox.top));
 	bullet.setSize(sf::Vector2f(hitbox.width, hitbox.height));
 	bullet.setFillColor(sf::Color::Red);
+
+	static sf::SoundBuffer shootSoundBuffer;
+	static sf::Sound shootSound;
+
+	shootSoundBuffer.loadFromFile("sounds/Gun+Silencer.wav");
+	shootSound.setBuffer(shootSoundBuffer);
+	shootSound.play();
+
 }
 
 Hitbox* Bullet::checkCollision(std::vector<Hitbox*>& envs) {

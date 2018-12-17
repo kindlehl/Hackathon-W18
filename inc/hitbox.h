@@ -20,7 +20,7 @@ class Hitbox : public sf::Drawable {
 		float value() const;
 		virtual void draw(sf::RenderTarget&, sf::RenderStates) const = 0;
 		virtual sf::IntRect getHitbox() const = 0;
-		type_enum type = ENVIRONMENT_TYPE;
+		type_enum type = FRIENDLY_PLAYER_TYPE;
 };
 
 struct hitboxCompare {

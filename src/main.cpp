@@ -157,13 +157,13 @@ int main (int argc, char** argv) {
 			iter->update();
 			Hitbox* hitEnv = iter->checkCollision(envs);
 			if(hitEnv != NULL){
-				if(hitEnv->type == ENEMY_PLAYER_TYPE || hitEnv->type == FRIENDLY_PLAYER_TYPE){
+				if(hitEnv->type != ENVIRONMENT_TYPE){
 					bulletVec.erase(iter);
 					player.rewinding = true;
 					enemy.rewinding = true;
 					break;
 				}
-				if(hitEnv->type != FRIENDLY_PLAYER_TYPE){
+				if(hitEnv->type == ENVIRONMENT_TYPE){
 					bulletVec.erase(iter);
 					break;
 				}
