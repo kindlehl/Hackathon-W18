@@ -181,14 +181,14 @@ int main (int argc, char** argv) {
 
 		sf::Vector2i velocity;
 		// load bullet vectors 
-		if (bulletDir == Right) velocity = sf::Vector2i(10, 0);
-		else if (bulletDir == Left) velocity = sf::Vector2i(-10, 0);
-		else if (bulletDir == Up) velocity = sf::Vector2i(0, -10);
-		else if (bulletDir == Down) velocity = sf::Vector2i(0, 10);
-		else if (bulletDir == UpRight) velocity = sf::Vector2i(6, -6);
-		else if (bulletDir == DownRight) velocity = sf::Vector2i(6, 6);
-		else if (bulletDir == DownLeft) velocity = sf::Vector2i(-6, 6);
-		else if (bulletDir == UpLeft) velocity = sf::Vector2i(-6, -6);
+		if (bulletDir == Right) velocity = sf::Vector2i(20, 0);
+		else if (bulletDir == Left) velocity = sf::Vector2i(-20, 0);
+		else if (bulletDir == Up) velocity = sf::Vector2i(0, -20);
+		else if (bulletDir == Down) velocity = sf::Vector2i(0, 20);
+		else if (bulletDir == UpRight) velocity = sf::Vector2i(12, -12);
+		else if (bulletDir == DownRight) velocity = sf::Vector2i(12, 12);
+		else if (bulletDir == DownLeft) velocity = sf::Vector2i(-12, 12);
+		else if (bulletDir == UpLeft) velocity = sf::Vector2i(-12, -12);
 
 		if(velocity.x || velocity.y){
 			bulletVec.push_back(Bullet(player.hitbox, velocity, client, server));
