@@ -1,7 +1,7 @@
 #include "../inc/bullet.h"
 
 // ctor takes in the 
-Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity, ENetHost* client, ENetPeer* server) {
+Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity, int d, ENetHost* client, ENetPeer* server) {
 	hitbox.left = rectIn.left + rectIn.width/2;
 	hitbox.top = rectIn.top - rectIn.height/2;
 	hitbox.width = rectIn.width/4;
@@ -19,6 +19,8 @@ Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity, ENetHost* client, ENet
 	shootSoundBuffer.loadFromFile("sounds/Gun+Silencer.wav");
 	shootSound.setBuffer(shootSoundBuffer);
 	shootSound.play();
+
+	type = FRIENDLY_BULLET_TYPE;
 
 	sendCreateSignal(client, server);
 }
@@ -39,6 +41,7 @@ Bullet::Bullet(char* packet) {
 	bullet.setPosition(sf::Vector2f(hitbox.left, hitbox.top));
 	bullet.setSize(sf::Vector2f(hitbox.width, hitbox.height));
 	bullet.setFillColor(sf::Color::Red);
+	type = ENEMY_BULLET_TYPE;
 }
 
 Hitbox* Bullet::checkCollision(std::vector<Hitbox*>& envs) {

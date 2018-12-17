@@ -160,7 +160,7 @@ int main (int argc, char** argv) {
 				if(hitEnv->type == ENEMY_PLAYER_TYPE){
 					player.rewinding = true;
 				}
-				if(hitEnv->type != FRIENDLY_PLAYER_TYPE){
+				if(hitEnv->type != FRIENDLY_PLAYER_TYPE && iter->type != FRIENDLY_BULLET_TYPE){
 					bulletVec.erase(iter);
 				}
 			}
@@ -193,7 +193,7 @@ int main (int argc, char** argv) {
 		else if (bulletDir == UpLeft) velocity = sf::Vector2i(-12, -12);
 
 		if(velocity.x || velocity.y){
-			bulletVec.push_back(Bullet(player.hitbox, velocity, client, server));
+			bulletVec.push_back(Bullet(player.hitbox, velocity, bulletDir, client, server));
 			bulletDir = None;
 		}
 

@@ -23,7 +23,7 @@ class Bullet : public Hitbox
 {
 public:
 
-	Bullet(sf::IntRect, sf::Vector2i, ENetHost* client, ENetPeer* server);
+	Bullet(sf::IntRect, sf::Vector2i, int, ENetHost* client, ENetPeer* server);
 	Bullet(char*);//load from network
 	Bullet(int, int, int, int);
 	sf::IntRect hitbox;

@@ -9,7 +9,9 @@ extern sf::Vector2i screenSize;
 enum type_enum {
 	ENVIRONMENT_TYPE,
 	FRIENDLY_PLAYER_TYPE,
-	ENEMY_PLAYER_TYPE
+	FRIENDLY_BULLET_TYPE,
+	ENEMY_PLAYER_TYPE,
+	ENEMY_BULLET_TYPE
 };
 
 class Hitbox : public sf::Drawable {
