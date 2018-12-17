@@ -164,6 +164,7 @@ int main (int argc, char** argv) {
 					break;
 				}
 				if(hitEnv->type == ENVIRONMENT_TYPE){
+
 					bulletVec.erase(iter);
 					break;
 				}
@@ -215,6 +216,7 @@ int main (int argc, char** argv) {
 		}
 
 		if(velocity.x || velocity.y){
+
 			bulletVec.push_back(Bullet(player.hitbox, velocity, offset, client, server));
 			bulletDir = None;
 		}

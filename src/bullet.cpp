@@ -1,11 +1,13 @@
 #include "../inc/bullet.h"
 
 // ctor takes in the 
+
 Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity, sf::Vector2i offset, ENetHost* client, ENetPeer* server) {
 	hitbox.left = rectIn.left + rectIn.width * 3 / 5 + offset.x;
 	hitbox.top = rectIn.top + rectIn.height * 3 / 5 + offset.y;
 	hitbox.width = rectIn.width/5;
 	hitbox.height = rectIn.height/5;
+
 	bullet.setFillColor(sf::Color::Red);
 	bullet.setPosition(hitbox.left, hitbox.top);
 	bullet.setSize(sf::Vector2f(hitbox.width, hitbox.height));
@@ -19,6 +21,8 @@ Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity, sf::Vector2i offset, E
 	shootSoundBuffer.loadFromFile("sounds/Gun+Silencer.wav");
 	shootSound.setBuffer(shootSoundBuffer);
 	shootSound.play();
+
+	type = FRIENDLY_BULLET_TYPE;
 
 	sendCreateSignal(client, server);
 }
@@ -40,12 +44,16 @@ Bullet::Bullet(char* packet) {
 	bullet.setSize(sf::Vector2f(hitbox.width, hitbox.height));
 	bullet.setFillColor(sf::Color::Red);
 
+
 	static sf::SoundBuffer shootSoundBuffer;
 	static sf::Sound shootSound;
 
 	shootSoundBuffer.loadFromFile("sounds/Gun+Silencer.wav");
 	shootSound.setBuffer(shootSoundBuffer);
 	shootSound.play();
+
+
+	type = ENEMY_BULLET_TYPE;
 
 }
 
