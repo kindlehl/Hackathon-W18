@@ -1,8 +1,5 @@
 img/maps/platform.jpg
-9
-700 300 100 100
-img/maps/cart_100000.png
-SOLID_STATIC
+11
 700 0 100 100
 img/maps/_tree_01_50000.png
 SOLID_STATIC
@@ -26,4 +23,13 @@ img/maps/_tree_01_50000.png
 SOLID_STATIC
 0 0 100 100
 img/maps/_tree_01_50000.png
+SOLID_STATIC
+225 400 100 100
+img/maps/rem_0002.png
+SOLID_STATIC
+400 600 100 100
+img/maps/cactus04.png
+SOLID_STATIC
+500 250 100 100
+img/maps/pine-none04.png
 SOLID_STATIC
