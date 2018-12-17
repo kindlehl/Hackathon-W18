@@ -166,8 +166,6 @@ int main (int argc, char** argv) {
 
 
 
-		player.update();
-		enemy.update();
 		matrix_background.update();
 
 		window.draw(matrix_background);
@@ -197,15 +195,10 @@ int main (int argc, char** argv) {
 			bulletDir = None;
 		}
 
-
-		//fire bullets from vectors
-		for (int i = 0; i < bulletVec.size(); i++) {
-			window.draw(bulletVec[i]);
-			bulletVec[i].update();
-		}
+		player.update();
+		enemy.update();
 
 		for(auto& b : bulletVec) {
-			cout << "Bullet at coords x, y: " << b.bullet.getPosition().x << ", " << b.bullet.getPosition().y << endl;
 			window.draw(b);
 		}
 		
