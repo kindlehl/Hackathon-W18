@@ -157,11 +157,16 @@ int main (int argc, char** argv) {
 			iter->update();
 			Hitbox* hitEnv = iter->checkCollision(envs);
 			if(hitEnv != NULL){
-				if(hitEnv->type == ENEMY_PLAYER_TYPE){
-					player.rewinding = true;
-				}
-				if(hitEnv->type != FRIENDLY_PLAYER_TYPE && iter->type != FRIENDLY_BULLET_TYPE){
+				if(hitEnv->type != ENVIRONMENT_TYPE){
 					bulletVec.erase(iter);
+					player.rewinding = true;
+					enemy.rewinding = true;
+					break;
+				}
+				if(hitEnv->type == ENVIRONMENT_TYPE){
+
+					bulletVec.erase(iter);
+					break;
 				}
 			}
 		}
@@ -182,18 +187,37 @@ int main (int argc, char** argv) {
 		}
 
 		sf::Vector2i velocity;
+		sf::Vector2i offset;
 		// load bullet vectors 
-		if (bulletDir == Right) velocity = sf::Vector2i(20, 0);
-		else if (bulletDir == Left) velocity = sf::Vector2i(-20, 0);
-		else if (bulletDir == Up) velocity = sf::Vector2i(0, -20);
-		else if (bulletDir == Down) velocity = sf::Vector2i(0, 20);
-		else if (bulletDir == UpRight) velocity = sf::Vector2i(12, -12);
-		else if (bulletDir == DownRight) velocity = sf::Vector2i(12, 12);
-		else if (bulletDir == DownLeft) velocity = sf::Vector2i(-12, 12);
-		else if (bulletDir == UpLeft) velocity = sf::Vector2i(-12, -12);
+		if (bulletDir == Right) {
+			velocity = sf::Vector2i(20, 0);
+			offset = sf::Vector2i(player.hitbox.width, 0);
+		} else if (bulletDir == Left) {
+			velocity = sf::Vector2i(-20, 0);
+			offset = sf::Vector2i(player.hitbox.width * -1, 0);
+		} else if (bulletDir == Up) {
+			velocity = sf::Vector2i(0, -20);
+			offset = sf::Vector2i(0, player.hitbox.height * -1);
+		} else if (bulletDir == Down) {
+			velocity = sf::Vector2i(0, 20);
+			offset = sf::Vector2i(0, player.hitbox.height);
+		} else if (bulletDir == UpRight) {
+			velocity = sf::Vector2i(12, -12);
+			offset = sf::Vector2i(player.hitbox.width, player.hitbox.height * -1);
+		} else if (bulletDir == DownRight) {
+			velocity = sf::Vector2i(12, 12);
+			offset = sf::Vector2i(player.hitbox.width, player.hitbox.height);
+		} else if (bulletDir == DownLeft) {
+			velocity = sf::Vector2i(-12, 12);
+			offset = sf::Vector2i(player.hitbox.width * -1, player.hitbox.height);
+		} else if (bulletDir == UpLeft) {
+			velocity = sf::Vector2i(-12, -12);
+			offset = sf::Vector2i(player.hitbox.width * -1, player.hitbox.height * -1);
+		}
 
 		if(velocity.x || velocity.y){
-			bulletVec.push_back(Bullet(player.hitbox, velocity, bulletDir, client, server));
+
+			bulletVec.push_back(Bullet(player.hitbox, velocity, offset, client, server));
 			bulletDir = None;
 		}
 

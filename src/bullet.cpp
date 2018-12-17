@@ -1,11 +1,13 @@
 #include "../inc/bullet.h"
 
 // ctor takes in the 
-Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity, int d, ENetHost* client, ENetPeer* server) {
-	hitbox.left = rectIn.left + rectIn.width/2;
-	hitbox.top = rectIn.top - rectIn.height/2;
-	hitbox.width = rectIn.width/4;
-	hitbox.height = rectIn.height/4;
+
+Bullet::Bullet(sf::IntRect rectIn, sf::Vector2i velocity, sf::Vector2i offset, ENetHost* client, ENetPeer* server) {
+	hitbox.left = rectIn.left + rectIn.width * 3 / 5 + offset.x;
+	hitbox.top = rectIn.top + rectIn.height * 3 / 5 + offset.y;
+	hitbox.width = rectIn.width/5;
+	hitbox.height = rectIn.height/5;
+
 	bullet.setFillColor(sf::Color::Red);
 	bullet.setPosition(hitbox.left, hitbox.top);
 	bullet.setSize(sf::Vector2f(hitbox.width, hitbox.height));
@@ -41,7 +43,18 @@ Bullet::Bullet(char* packet) {
 	bullet.setPosition(sf::Vector2f(hitbox.left, hitbox.top));
 	bullet.setSize(sf::Vector2f(hitbox.width, hitbox.height));
 	bullet.setFillColor(sf::Color::Red);
+
+
+	static sf::SoundBuffer shootSoundBuffer;
+	static sf::Sound shootSound;
+
+	shootSoundBuffer.loadFromFile("sounds/Gun+Silencer.wav");
+	shootSound.setBuffer(shootSoundBuffer);
+	shootSound.play();
+
+
 	type = ENEMY_BULLET_TYPE;
+
 }
 
 Hitbox* Bullet::checkCollision(std::vector<Hitbox*>& envs) {

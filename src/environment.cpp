@@ -16,6 +16,7 @@
 */
 
 Env::Env(std::istream& map) {
+		type = ENVIRONMENT_TYPE;
 	int x, y, w, h;
 	std::string path, t;
 
@@ -44,13 +45,13 @@ Env::Env(std::istream& map) {
 	spritebox.setScale(1.41 * hitbox.width / tex->getSize().x, 2 * 1.41 * hitbox.height / tex->getSize().y);
 
 	if(t == "CLIMB") {
-		type = CLIMB;
+		typ = CLIMB;
 	} else if (t == "SOLID_STATIC"){
-		type = SOLID_STATIC;
+		typ = SOLID_STATIC;
 	} else if (t == "SOLID_MOVING"){
-		type = SOLID_MOVING;
+		typ = SOLID_MOVING;
 	} else if (t == "DEADLY"){
-		type = DEADLY;
+		typ = DEADLY;
 	}else {
 		std::cerr << "INVALID ENVIRONMENT TYPE -> " << t << std::endl;
 		valid = false;
