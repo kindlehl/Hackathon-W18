@@ -101,7 +101,7 @@ void handleEvents(ENetHost* server) {
 }
 
 void send(ENetEvent* e) {
-	if(p2 && p2) {
+	if(p1 && p2) {
 		printf("Transmitting packet\n");
 	}else {
 		printf("Dropping packet\n");
