@@ -228,8 +228,6 @@ int main (int argc, char** argv) {
 			window.draw(b);
 		}
 		
-        window.draw(player);
-		window.draw(enemy);
         // Draw the string
         window.display();
     }
