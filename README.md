@@ -6,7 +6,29 @@ To run, you need to run the server (which unfortunately is hard-coded to be hack
 
 The game is rendered in 2D isometric fashion, and all the art and textures used herewithin are open to the public.
 
+![Real Lyfe Scr33nSh0t](https://i.imgur.com/oi20VPo.png)
+
 # Dependencies
 
 * SFML-2.5 - https://www.sfml-dev.org/download/sfml/2.5.1/
 * ENet - http://enet.bespin.org/Downloads.html
+
+# Build
+
+To build, just run `make`.
+
+# Running
+
+The build process generates two executables, `game` and `server`. You should run the server locally if you want multiplayer, but make sure your `/etc/hosts` file has the following entry:
+
+```bash
+127.0.0.1 hack.hunterlannon.net
+```
+
+The multiplayer should just **work**. Clients can come and go as they please, but only two players are allowed. I may add more players in the future :)
+
+# Controls
+
+wasd - move around the map.
+
+<space> - tap to shoot. Hold to aim with wasd.
