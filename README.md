@@ -31,4 +31,4 @@ The multiplayer should just **work**. Clients can come and go as they please, bu
 
 wasd - move around the map.
 
-<space> - tap to shoot. Hold to aim with wasd.
+\<space\> - tap to shoot. Hold to aim with wasd.
